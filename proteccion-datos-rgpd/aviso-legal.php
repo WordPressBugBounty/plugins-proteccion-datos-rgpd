@@ -12,11 +12,11 @@ defined( 'ABSPATH' ) || die( 'No se permite el acceso.' );
 
 // Shortcodes.
 
-add_shortcode( 'pdrgpd-aviso-legal', 'pdrgpd_aviso_legal' );
 /**
- * Compone el contenido completo de [pdrgpd-aviso-legal]
- * para crear la página del aviso legal aplicando la lista
- * de shortcodes de menor entidad.
+ * Shortcode principal que compone el Aviso Legal completo.
+ * Combina todos los shortcodes de secciones menores.
+ *
+ * @return string HTML generado por los shortcodes combinados.
  */
 function pdrgpd_aviso_legal() {
 	$html  = "[pdrgpd-aviso-legal-identificacion-titular]\n";
@@ -30,8 +30,16 @@ function pdrgpd_aviso_legal() {
 	$html .= "[pdrgpd-aviso-legal-legislacion]\n";
 	return do_shortcode( $html );
 }
+add_shortcode( 'pdrgpd-aviso-legal', 'pdrgpd_aviso_legal' );
 
-add_shortcode( 'pdrgpd-aviso-legal-identificacion-titular', 'pdrgpd_aviso_legal_identificacion_titular' );
+/**
+ * Genera la sección de identificación del titular del sitio web.
+ *
+ * @return string HTML con los datos identificativos del titular.
+ *
+ * @internal
+ * Nota: La estructura HTML varía según el idioma (ca/es) y campos configurados.
+ */
 function pdrgpd_aviso_legal_identificacion_titular() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
@@ -47,7 +55,8 @@ function pdrgpd_aviso_legal_identificacion_titular() {
 		if ( pdrgpd_conf_cp() ) {
 			$html .= ', codi postal [pdrgpd-cp]';
 		}
-		$html .= ' de [pdrgpd-poblacion]';
+		// Si se pone "de", puede requerir apostrofarlo.
+		$html .= ' a [pdrgpd-poblacion]';
 		if ( pdrgpd_conf_provincia() && pdrgpd_conf_provincia() !== pdrgpd_conf_poblacion() ) {
 			$html .= ', [pdrgpd-provincia]';
 		}
@@ -74,8 +83,7 @@ function pdrgpd_aviso_legal_identificacion_titular() {
 		if ( pdrgpd_conf_cp() ) {
 			$html .= ', código postal [pdrgpd-cp]';
 		}
-		// Si se pone "de", puede requerir apostrofarlo.
-		$html .= ' a [pdrgpd-poblacion]';
+		$html .= ' en [pdrgpd-poblacion]';
 		if ( pdrgpd_conf_provincia() && pdrgpd_conf_provincia() !== pdrgpd_conf_poblacion() ) {
 			$html .= ', [pdrgpd-provincia]';
 		}
@@ -92,8 +100,13 @@ function pdrgpd_aviso_legal_identificacion_titular() {
 	}
 	return do_shortcode( $html );
 }
+add_shortcode( 'pdrgpd-aviso-legal-identificacion-titular', 'pdrgpd_aviso_legal_identificacion_titular' );
 
-add_shortcode( 'pdrgpd-aviso-legal-condiciones', 'pdrgpd_aviso_legal_condiciones' );
+/**
+ * Genera la sección de condiciones de uso del sitio web.
+ *
+ * @return string HTML con las condiciones de uso.
+ */
 function pdrgpd_aviso_legal_condiciones() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
@@ -127,8 +140,13 @@ function pdrgpd_aviso_legal_condiciones() {
 	}
 	return do_shortcode( $html );
 }
+add_shortcode( 'pdrgpd-aviso-legal-condiciones', 'pdrgpd_aviso_legal_condiciones' );
 
-add_shortcode( 'pdrgpd-aviso-legal-propiedad-intelectual', 'pdrgpd_aviso_legal_propiedad_intelectual' );
+/**
+ * Genera la sección sobre propiedad intelectual del contenido.
+ *
+ * @return string HTML sobre derechos de propiedad intelectual.
+ */
 function pdrgpd_aviso_legal_propiedad_intelectual() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
@@ -140,8 +158,13 @@ function pdrgpd_aviso_legal_propiedad_intelectual() {
 	}
 	return do_shortcode( $html );
 }
+add_shortcode( 'pdrgpd-aviso-legal-propiedad-intelectual', 'pdrgpd_aviso_legal_propiedad_intelectual' );
 
-add_shortcode( 'pdrgpd-aviso-legal-disponibilidad', 'pdrgpd_aviso_legal_disponibilidad' );
+/**
+ * Genera la sección sobre disponibilidad del sitio web.
+ *
+ * @return string HTML sobre garantías de disponibilidad.
+ */
 function pdrgpd_aviso_legal_disponibilidad() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
@@ -173,8 +196,13 @@ function pdrgpd_aviso_legal_disponibilidad() {
 	}
 	return do_shortcode( $html );
 }
+add_shortcode( 'pdrgpd-aviso-legal-disponibilidad', 'pdrgpd_aviso_legal_disponibilidad' );
 
-add_shortcode( 'pdrgpd-aviso-legal-calidad', 'pdrgpd_aviso_legal_calidad' );
+/**
+ * Genera la sección sobre calidad del contenido.
+ *
+ * @return string HTML sobre garantías de calidad.
+ */
 function pdrgpd_aviso_legal_calidad() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
@@ -186,8 +214,13 @@ function pdrgpd_aviso_legal_calidad() {
 	}
 	return do_shortcode( $html );
 }
+add_shortcode( 'pdrgpd-aviso-legal-calidad', 'pdrgpd_aviso_legal_calidad' );
 
-add_shortcode( 'pdrgpd-aviso-legal-limitacion-responsabilidad', 'pdrgpd_aviso_legal_limitacion_responsabilidad' );
+/**
+ * Genera la sección de limitación de responsabilidad.
+ *
+ * @return string HTML sobre exclusiones de responsabilidad.
+ */
 function pdrgpd_aviso_legal_limitacion_responsabilidad() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
@@ -199,8 +232,13 @@ function pdrgpd_aviso_legal_limitacion_responsabilidad() {
 	}
 	return do_shortcode( $html );
 }
+add_shortcode( 'pdrgpd-aviso-legal-limitacion-responsabilidad', 'pdrgpd_aviso_legal_limitacion_responsabilidad' );
 
-add_shortcode( 'pdrgpd-aviso-legal-notificaciones', 'pdrgpd_aviso_legal_notificaciones' );
+/**
+ * Genera la sección sobre notificaciones legales.
+ *
+ * @return string HTML sobre eficacia de notificaciones.
+ */
 function pdrgpd_aviso_legal_notificaciones() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
@@ -212,8 +250,14 @@ function pdrgpd_aviso_legal_notificaciones() {
 	}
 	return do_shortcode( $html );
 }
+add_shortcode( 'pdrgpd-aviso-legal-notificaciones', 'pdrgpd_aviso_legal_notificaciones' );
 
-add_shortcode( 'pdrgpd-aviso-legal-jurisdiccion', 'pdrgpd_aviso_legal_jurisdiccion' );
+/**
+ * Genera la sección de jurisdicción aplicable.
+ * Solo se muestra si está definida una provincia.
+ *
+ * @return string|null HTML sobre jurisdicción o null si no aplica.
+ */
 function pdrgpd_aviso_legal_jurisdiccion() {
 	// Para fijar la jurisdicción, ha de estar definida la provincia.
 	if ( pdrgpd_conf_provincia() ) {
@@ -228,8 +272,13 @@ function pdrgpd_aviso_legal_jurisdiccion() {
 		return do_shortcode( $html );
 	}
 }
+add_shortcode( 'pdrgpd-aviso-legal-jurisdiccion', 'pdrgpd_aviso_legal_jurisdiccion' );
 
-add_shortcode( 'pdrgpd-aviso-legal-legislacion', 'pdrgpd_aviso_legal_legislacion' );
+/**
+ * Genera la sección sobre legislación aplicable.
+ *
+ * @return string HTML sobre normativa legal.
+ */
 function pdrgpd_aviso_legal_legislacion() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
@@ -241,47 +290,93 @@ function pdrgpd_aviso_legal_legislacion() {
 	}
 	return do_shortcode( $html );
 }
+add_shortcode( 'pdrgpd-aviso-legal-legislacion', 'pdrgpd_aviso_legal_legislacion' );
 
 // Lectura de valores configurados o por defecto.
-add_shortcode( 'pdrgpd-titular', 'pdrgpd_conf_titular' );
+
+/**
+ * Shortcode para obtener el titular del sitio.
+ *
+ * @return string Nombre del titular (escapado).
+ */
 function pdrgpd_conf_titular() {
 	return esc_html( get_option( 'pdrgpd_titular', 'Perico de los Palotes' ) );
 }
+add_shortcode( 'pdrgpd-titular', 'pdrgpd_conf_titular' );
 
-add_shortcode( 'pdrgpd-nif', 'pdrgpd_conf_nif' );
+/**
+ * Shortcode para obtener el NIF/CIF del titular.
+ *
+ * @return string NIF/CIF (escapado).
+ */
 function pdrgpd_conf_nif() {
 	return esc_html( get_option( 'pdrgpd_nif', 'X00000000T' ) );
 }
+add_shortcode( 'pdrgpd-nif', 'pdrgpd_conf_nif' );
 
+/**
+ * Obtiene el número de inscripción VIES.
+ *
+ * @return string Valor VIES (escapado).
+ */
 function pdrgpd_conf_vies() {
 	return esc_html( get_option( 'pdrgpd_vies', '' ) );
 }
 
-add_shortcode( 'pdrgpd-direccion', 'pdrgpd_conf_direccion' );
+/**
+ * Shortcode para obtener la dirección del titular.
+ *
+ * @return string Dirección (escapada).
+ */
 function pdrgpd_conf_direccion() {
 	return esc_html( get_option( 'pdrgpd_direccion', '13, Rue del Percebe' ) );
 }
+add_shortcode( 'pdrgpd-direccion', 'pdrgpd_conf_direccion' );
 
-add_shortcode( 'pdrgpd-cp', 'pdrgpd_conf_cp' );
+/**
+ * Shortcode para obtener el código postal.
+ *
+ * @return string Código postal (escapado).
+ */
 function pdrgpd_conf_cp() {
 	return esc_html( get_option( 'pdrgpd_cp', '' ) );
 }
+add_shortcode( 'pdrgpd-cp', 'pdrgpd_conf_cp' );
 
-add_shortcode( 'pdrgpd-poblacion', 'pdrgpd_conf_poblacion' );
+/**
+ * Shortcode para obtener la población.
+ *
+ * @return string Población (escapada).
+ */
 function pdrgpd_conf_poblacion() {
 	return esc_html( get_option( 'pdrgpd_poblacion', 'Villaconejos de Arriba' ) );
 }
+add_shortcode( 'pdrgpd-poblacion', 'pdrgpd_conf_poblacion' );
 
-add_shortcode( 'pdrgpd-provincia', 'pdrgpd_conf_provincia' );
+/**
+ * Shortcode para obtener la provincia.
+ *
+ * @return string Provincia (escapada).
+ */
 function pdrgpd_conf_provincia() {
 	return esc_html( get_option( 'pdrgpd_provincia', '' ) );
 }
+add_shortcode( 'pdrgpd-provincia', 'pdrgpd_conf_provincia' );
 
+/**
+ * Obtiene el país configurado (siempre España).
+ *
+ * @return string "España".
+ */
 function pdrgpd_conf_pais() {
 	return esc_html( 'España' );
 }
 
-add_shortcode( 'pdrgpd-telefono', 'pdrgpd_html_telefono' );
+/**
+ * Shortcode para mostrar el teléfono como enlace clickable.
+ *
+ * @return string HTML del teléfono (enlace si es válido).
+ */
 function pdrgpd_html_telefono() {
 	$telefono_conf = pdrgpd_conf_telefono();
 	if ( preg_match( '/^\(?\+/', $telefono_conf ) ) {
@@ -296,12 +391,26 @@ function pdrgpd_html_telefono() {
 	}
 	return $html;
 }
+add_shortcode( 'pdrgpd-telefono', 'pdrgpd_html_telefono' );
 
+/**
+ * Obtiene el teléfono configurado para el aviso legal
+ *
+ * - Valor por defecto: cadena vacía
+ * - El valor se escapa con esc_html()
+ * - Formato recomendado: [+][prefijo][número] (ej: +34123456789)
+ *
+ * @return string Teléfono en formato válido o cadena vacía
+ */
 function pdrgpd_conf_telefono() {
 	return esc_html( get_option( 'pdrgpd_telefono', '' ) );
 }
 
-add_shortcode( 'pdrgpd-email', 'pdrgpd_html_email' );
+/**
+ * Shortcode para mostrar el email como enlace con protección antispam.
+ *
+ * @return string HTML del email (enlace protegido).
+ */
 function pdrgpd_html_email() {
 	$html  = '<a href="mailto:';
 	$html .= antispambot( pdrgpd_conf_email(), 1 );
@@ -310,11 +419,22 @@ function pdrgpd_html_email() {
 	$html .= '</a>';
 	return $html;
 }
+add_shortcode( 'pdrgpd-email', 'pdrgpd_html_email' );
 
+/**
+ * Obtiene el email configurado (o el del admin).
+ *
+ * @return string Email (escapado).
+ */
 function pdrgpd_conf_email() {
 	return esc_html( get_option( 'pdrgpd_email', get_bloginfo( 'admin_email' ) ) );
 }
 
+/**
+ * Genera texto de inscripción VIES si está configurado.
+ *
+ * @return string Texto HTML o vacío.
+ */
 function pdrgpd_inscripcion_vies() {
 	if ( pdrgpd_conf_vies() ) {
 		$locale = get_locale();
@@ -325,11 +445,25 @@ function pdrgpd_inscripcion_vies() {
 	}
 }
 
+/**
+ * Formatea el NIF-IVA según país
+ *
+ * @param string $pais Nombre completo del país (ej: "España").
+ * @param string $iva NIF/CIF sin prefijo de país.
+ * @return string NIF-IVA formateado (ej: "ESX00000000T").
+ * @throws InvalidArgumentException Si el país no está soportado.
+ */
 function pdrgpd_nif_iva( $pais, $iva ) {
 	$vat = pdrgpd_codigo_pais( $pais ) . $iva;
 	return $vat;
 }
 
+/**
+ * Obtiene el código de país ISO para VIES.
+ *
+ * @param string $pais Nombre del país.
+ * @return string Código ISO de 2 letras.
+ */
 function pdrgpd_codigo_pais( $pais ) {
 	switch ( $pais ) {
 		case 'Alemania':
@@ -420,8 +554,12 @@ function pdrgpd_codigo_pais( $pais ) {
 	return $codigo;
 }
 
-/** Inscripción en el Registro Mercantil
-// add_shortcode( 'pdrgpd-inscripcion-registro-mercantil' , 'pdrgpd_inscripcion_registro_mercantil' ); */
+
+/**
+ * Genera texto de inscripción en Registro Mercantil si está configurado.
+ *
+ * @return string Texto HTML o vacío.
+ */
 function pdrgpd_inscripcion_registro_mercantil() {
 	$locale = get_locale();
 	if ( pdrgpd_conf_rmercant_poblacion() ) {
@@ -460,71 +598,154 @@ function pdrgpd_inscripcion_registro_mercantil() {
 	}
 }
 
+// Funciones de configuración del Registro Mercantil (todas devuelven strings escapados).
+
+/**
+ * Obtiene la población de inscripción en el Registro Mercantil.
+ *
+ * @return string Población de registro (escapada).
+ */
 function pdrgpd_conf_rmercant_poblacion() {
 	return esc_html( get_option( 'pdrgpd_rmercant_poblacion', '' ) );
 }
 
+/**
+ * Obtiene la provincia de inscripción en el Registro Mercantil.
+ *
+ * @return string Provincia de registro (escapada).
+ */
 function pdrgpd_conf_rmercant_provincia() {
 	return esc_html( get_option( 'pdrgpd_rmercant_provincia', '' ) );
 }
 
+/**
+ * Obtiene la fecha de inscripción en el Registro Mercantil.
+ *
+ * @return string Fecha de registro (escapada).
+ */
 function pdrgpd_conf_rmercant_fecha() {
 	return esc_html( get_option( 'pdrgpd_rmercant_fecha', '' ) );
 }
 
+/**
+ * Obtiene el número de presentación en el Registro Mercantil.
+ *
+ * @return string Número de presentación (escapado).
+ */
 function pdrgpd_conf_rmercant_presentacion() {
 	return esc_html( get_option( 'pdrgpd_rmercant_presentacion', '' ) );
 }
 
+/**
+ * Obtiene la sección de inscripción en el Registro Mercantil.
+ *
+ * @return string Sección de registro (escapada).
+ */
 function pdrgpd_conf_rmercant_seccion() {
 	return esc_html( get_option( 'pdrgpd_rmercant_seccion', '' ) );
 }
 
+/**
+ * Obtiene el libro de inscripción en el Registro Mercantil.
+ *
+ * @return string Libro de registro (escapado).
+ */
 function pdrgpd_conf_rmercant_libro() {
 	return esc_html( get_option( 'pdrgpd_rmercant_libro', '' ) );
 }
 
+/**
+ * Obtiene el tomo de inscripción en el Registro Mercantil.
+ *
+ * @return string Tomo de registro (escapado).
+ */
 function pdrgpd_conf_rmercant_tomo() {
 	return esc_html( get_option( 'pdrgpd_rmercant_tomo', '' ) );
 }
 
+/**
+ * Obtiene el folio de inscripción en el Registro Mercantil.
+ *
+ * @return string Folio de registro (escapado).
+ */
 function pdrgpd_conf_rmercant_folio() {
 	return esc_html( get_option( 'pdrgpd_rmercant_folio', '' ) );
 }
 
+/**
+ * Obtiene la hoja de inscripción en el Registro Mercantil.
+ *
+ * @return string Hoja de registro (escapada).
+ */
 function pdrgpd_conf_rmercant_hoja() {
 	return esc_html( get_option( 'pdrgpd_rmercant_hoja', '' ) );
 }
 
+/**
+ * Obtiene el protocolo de inscripción en el Registro Mercantil.
+ *
+ * @return string Protocolo de registro (escapado).
+ */
 function pdrgpd_conf_rmercant_protocolo() {
 	return esc_html( get_option( 'pdrgpd_rmercant_protocolo', '' ) );
 }
 
+/**
+ * Obtiene el número de inscripción en el Registro Mercantil.
+ *
+ * @return string Número de registro (escapado).
+ */
 function pdrgpd_conf_rmercant_num() {
 	return esc_html( get_option( 'pdrgpd_rmercant_num', '' ) );
 }
 
-add_shortcode( 'pdrgpd-sitio', 'pdrgpd_conf_sitio' );
+/**
+ * Shortcode para obtener el nombre del sitio.
+ *
+ * @return string Nombre del sitio (escapado).
+ */
 function pdrgpd_conf_sitio() {
 	return esc_html( get_option( 'pdrgpd_sitio', get_bloginfo( 'name' ) ) );
 }
+add_shortcode( 'pdrgpd-sitio', 'pdrgpd_conf_sitio' );
 
-add_shortcode( 'pdrgpd-dominio', 'pdrgpd_conf_dominio' );
+/**
+ * Shortcode para obtener el dominio del sitio.
+ *
+ * @return string Dominio (escapado).
+ */
 function pdrgpd_conf_dominio() {
 	// Quitamos el protocolo al valor por defecto de la home.
 	return esc_html( get_option( 'pdrgpd_dominio', explode( '//', get_bloginfo( 'url' ) )[1] ) );
 }
-add_shortcode( 'pdrgpd-uri-aviso', 'pdrgpd_conf_uri_aviso' );
+add_shortcode( 'pdrgpd-dominio', 'pdrgpd_conf_dominio' );
+
+/**
+ * Shortcode para obtener la URL del Aviso Legal.
+ *
+ * @return string URL completa (escapada).
+ */
 function pdrgpd_conf_uri_aviso() {
 	return esc_url( get_option( 'pdrgpd_uri_aviso', get_bloginfo( 'wpurl' ) . '/aviso-legal/' ) );
 }
+add_shortcode( 'pdrgpd-uri-aviso', 'pdrgpd_conf_uri_aviso' );
 
-add_shortcode( 'pdrgpd-uri-privacidad', 'pdrgpd_conf_uri_privacidad' );
+/**
+ * Shortcode para obtener la URL de la Política de Privacidad.
+ *
+ * @return string URL completa (escapada).
+ */
 function pdrgpd_conf_uri_privacidad() {
 	return esc_url( get_option( 'pdrgpd_uri_privacidad', get_bloginfo( 'wpurl' ) . '/privacidad/' ) );
 }
+add_shortcode( 'pdrgpd-uri-privacidad', 'pdrgpd_conf_uri_privacidad' );
 
-add_shortcode( 'pdrgpd-uri-cookies', 'pdrgpd_conf_uri_cookies' );
+/**
+ * Shortcode para obtener la URL de la Política de Cookies.
+ *
+ * @return string URL completa (escapada).
+ */
 function pdrgpd_conf_uri_cookies() {
 	return esc_url( get_option( 'pdrgpd_uri_cookies', get_bloginfo( 'wpurl' ) . '/cookies/' ) );
 }
+add_shortcode( 'pdrgpd-uri-cookies', 'pdrgpd_conf_uri_cookies' );

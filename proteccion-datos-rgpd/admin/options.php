@@ -879,9 +879,14 @@ function pdrgpd_existe_shortcode_o_derivado_en_pagina_sitio( $pagina, $shortcode
 
 function pdrgpd_enlace_pagina_wp( $url ) {
 	$pagina = pdrgpd_carga_pagina_sitio( $url );
-	// $anchor = get_the_title( $pagina );
-	$anchor = $pagina->post_title;
-	$html   = pdrgpd_enlace_nueva_ventana( $url, $anchor );
+	// Verifica si $pagina no es null y es un objeto.
+	if ( $pagina && isset( $pagina->post_title ) ) {
+		$anchor = $pagina->post_title;
+	} else {
+		// Maneja el caso donde la página no se encuentre.
+		$anchor = __( 'Page not found', 'proteccion-datos-rgpd' );
+	}
+	$html = pdrgpd_enlace_nueva_ventana( $url, $anchor );
 	return $html;
 }
 

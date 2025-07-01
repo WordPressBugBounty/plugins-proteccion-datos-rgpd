@@ -3,7 +3,7 @@
  * Plugin Name: Protección de datos - RGPD
  * Plugin URI:  https://taller.abcdatos.net/plugin-rgpd-wordpress/
  * Description: Arrange your site to GDPR (General Data Protection Regulation) and LSSICE as well as other required tasks based on required configurations ettings.
- * Version:     0.67
+ * Version:     0.68
  * Author:      ABCdatos
  * Author URI:  https://taller.abcdatos.net/
  * License:     GPLv2
