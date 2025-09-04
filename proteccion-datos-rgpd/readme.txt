@@ -2,7 +2,7 @@
 Contributors: ABCdatos
 Tags: privacidad,rgpd,proteccion,datos,legal
 Requires at least: 4.2
-Tested up to: 6.7
+Tested up to: 6.8
 Stable tag: 0.68
 Requires PHP: 5.3
 License: GPLv2
@@ -176,8 +176,8 @@ El banner de cookies solo es obligatorio si las usas. En ese caso, además de mo
 
 == Changelog ==
 
-= 0.68-dev =
-**** ** 2025*
+= 0.68 =
+*Jul 01 2025*
 * Improved handling for non-existent pages specified in control panel options.
 * Minor corrections to legal advice.
 * WordPress 6.7 basic compatibility checked.
