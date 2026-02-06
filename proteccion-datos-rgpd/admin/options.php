@@ -14,8 +14,22 @@ define( 'AVISO_ROJO', '<span style="color:red;">&#9679;&nbsp;</span> ' );
 define( 'AVISO_AMARILLO', '<span style="color:orange;">&#9679;&nbsp;</span>' );
 define( 'AVISO_VERDE', '<span style="color:green;">&#10004;&nbsp;</span> ' );
 
-// Dashboard menu settings.
-add_action( 'admin_menu', 'pdrgpd_add_admin_menu' );
+/*
+ * ------------------------------------------------------------------------
+ * Registro de menú y página de ajustes
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * Añade la página de ajustes al menú lateral de administración.
+ *
+ * Crea el entry-point “Protección Datos RGPD” bajo el capability
+ * `manage_options`. Si hay errores de configuración se muestra un globo
+ * con aviso.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_add_admin_menu() {
 	if ( pdrgpd_errores_config() ) {
 		$contenido_notificacion = '⚠ ';
@@ -35,8 +49,17 @@ function pdrgpd_add_admin_menu() {
 		'data:image/svg+xml;base64,' . $icono_base64                                  // Icon.
 	);
 }
+add_action( 'admin_menu', 'pdrgpd_add_admin_menu' );
 
-/** Settings page function. */
+/**
+ * Renderiza el HTML de la pantalla de ajustes.
+ *
+ * Comprueba permisos, muestra el título, errores y el formulario
+ * generado por Settings API.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_admin() {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		wp_die( 'No tienes suficientes permisos para acceder a esta página.' );
@@ -56,19 +79,59 @@ function pdrgpd_admin() {
 	<?php
 }
 
-// Settings page functionality.
+/*
+ * ------------------------------------------------------------------------
+ * Registro de opciones y secciones (Settings API)
+ * ------------------------------------------------------------------------
+ */
 
-add_action( 'admin_init', 'pdrgpd_settings_init' );
+/**
+ * Registra las opciones y, tras la validación, crea páginas legales si se solicita.
+ *
+ * Recorre la lista devuelta por `pdrgpd_lista_opciones()` y ejecuta
+ * `register_setting()` para cada una.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_settings_init() {
 
-	// Registers all the option values defined.
+	// Registrar todas las opciones.
 	foreach ( pdrgpd_lista_opciones() as $nombre_opcion ) {
 		register_setting( 'proteccion-datos-rgpd-ajustes', $nombre_opcion );
 	}
 
-	// Crea las páginas legales si se ha solicitado.
+	// ¿Se ha marcado “crear páginas legales”?
 	if ( isset( $_POST['pdrgpd_crear_paginas_legales'] ) ) {
-		pdrgpd_cear_paginas_legales();
+
+		// 1. Verificar nonce.
+		if ( ! isset( $_POST['_pdrgpd_nonce'] )
+			|| ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_pdrgpd_nonce'] ) ), 'pdrgpd_crear_legales' )
+		) {
+			// Nonce inválido.
+			add_settings_error(
+				'pdrgpd_ajustes',
+				'pdrgpd_nonce_error',
+				__( 'Security check failed. Pages were not created.', 'proteccion-datos-rgpd' ),
+				'error'
+			);
+			return;
+		}
+
+		// 2. Confirmar que el POST viene del grupo de opciones de la página (evita colisiones de nombres o posts extraños).
+		if ( empty( $_POST['option_page'] ) ||
+		'proteccion-datos-rgpd-ajustes' !== $_POST['option_page']
+		) {
+			return;
+		}
+
+		// 3. Seguir solo si el usuario puede.
+		if ( ! is_admin() || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		// 4. Crear páginas.
+		pdrgpd_crear_paginas_legales();
 	}
 
 	// Owner and liable data / Datos del titular y responsable.
@@ -498,30 +561,68 @@ function pdrgpd_settings_init() {
 		'pdrgpd_seccion_pie'
 	);
 }
+add_action( 'admin_init', 'pdrgpd_settings_init' );
+
+/*
+ * ------------------------------------------------------------------------
+ * Callbacks de secciones
+ * ------------------------------------------------------------------------
+ */
 
 /**
- * Callbacks to show options data.
- * Callbacks para la presentación de datos de opciones.
+ * Texto descriptivo para la sección “Datos del titular y responsable”.
+ *
+ * @since 1.0.0
+ * @return void
  */
 function pdrgpd_seccion_titular_callback() {
 	echo wp_kses( __( 'General data required to fulfill legal notice according law 34/2002, of July 11, on information society services and electronic commerce (LSSICE) and others.<br />Fill appropriate fields.', 'proteccion-datos-rgpd' ), array( 'br' => array() ) );
 }
 
-/** Hidden field to save version number too. */
+/*
+ * ------------------------------------------------------------------------
+ * Callbacks de campos (input)
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * Campo oculto que guarda el número de versión del plugin.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_version_callback() {
 	echo '<input name="pdrgpd_version" type="hidden" id="pdrgpd_version" value="' . esc_attr( pdrgpd_get_version() ) . '" />';
 }
 
+/**
+ * Input para el nombre o razón social del titular.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_titular_callback() {
 	echo '<input name="pdrgpd_titular" type="text" id="pdrgpd_titular" value="' . esc_attr( pdrgpd_conf_titular() ) . '" class="regular-text" />';
 	echo '<p class="description" id="tagline-description">También se le considerará  responsable de protección de datos.</p>';
 }
 
+/**
+ * Input para el DNI/NIE/NIF.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_nif_callback() {
 	echo '<input name="pdrgpd_nif" type="text" id="pdrgpd_nif" value="' . esc_attr( pdrgpd_conf_nif() ) . '" class="regular-text" />';
 	echo '<p class="description" id="tagline-description">Número o código del documento identificativo.</p>';
 }
 
+/**
+ * Checkbox “Está dado de alta en el VIES”.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_vies_callback() {
 	echo "<input type='checkbox' name='pdrgpd_vies' ";
 	checked( get_option( 'pdrgpd_vies' ), 1 );
@@ -534,100 +635,253 @@ function pdrgpd_vies_callback() {
 	echo '.</p>';
 }
 
+/**
+ * Input para la dirección postal.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_direccion_callback() {
 	echo '<input name="pdrgpd_direccion" type="text" id="pdrgpd_direccion" value="' . esc_attr( pdrgpd_conf_direccion() ) . '" class="regular-text" />';
 	echo '<p class="description" id="tagline-description">Dirección postal (Calle, número, piso, etc.) del titular del sitio.</p>';
 }
 
+/**
+ * Input para la población.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_poblacion_callback() {
 	echo '<input name="pdrgpd_poblacion" type="text" id="pdrgpd_poblacion" value="' . esc_attr( pdrgpd_conf_poblacion() ) . '" class="regular-text" />';
 }
 
+/**
+ * Input para el código postal.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_cp_callback() {
 	echo '<input name="pdrgpd_cp" type="text" id="pdrgpd_cp" value="' . esc_attr( pdrgpd_conf_cp() ) . '" class="regular-text" />';
 }
 
+/**
+ * Input para la provincia.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_provincia_callback() {
 	echo '<input name="pdrgpd_provincia" type="text" id="pdrgpd_provincia" value="' . esc_attr( pdrgpd_conf_provincia() ) . '" class="regular-text" />';
 	echo '<p class="description" id="tagline-description">Requerida para completar el apartado Jurisdicción.</p>';
 }
 
+/**
+ * Input para el teléfono (con prefijo internacional opcional).
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_telefono_callback() {
 	echo '<input name="pdrgpd_telefono" type="text" id="pdrgpd_telefono" value="' . esc_attr( pdrgpd_conf_telefono() ) . '" class="regular-text" />';
 	echo '<p class="description" id="tagline-description">Opcional, para utilizar junto a otros datos de contacto del titular en el aviso legal.<br />';
 	echo 'Agrega el prefijo internacional precedido por un símbolo + para obtener un enlace pulsable en dispositivos móviles.</p>';
 }
 
+/**
+ * Input para el e-mail de contacto.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_email_callback() {
 	echo '<input name="pdrgpd_email" type="text" id="pdrgpd_email" value="' . esc_attr( pdrgpd_conf_email() ) . '" class="regular-text" />';
 }
 
+/*
+ * ------------------------------------------------------------------------
+ * Campos de registro mercantil
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * Texto descriptivo para la sección “Inscripción en el registro mercantil”.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_seccion_rmercant_callback() {
 	esc_html_e( 'Only for corporations', 'proteccion-datos-rgpd' ) . '. ';
 	esc_html_e( 'LSSICE requirement', 'proteccion-datos-rgpd' ) . '. ';
 }
 
+/**
+ * Input población del registro.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_rmercant_poblacion_callback() {
 	echo '<input name="pdrgpd_rmercant_poblacion" type="text" id="pdrgpd_rmercant_poblacion" value="' . esc_attr( pdrgpd_conf_rmercant_poblacion() ) . '" class="regular-text" />';
 }
 
+/**
+ * Input provincia del registro.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_rmercant_provincia_callback() {
 	echo '<input name="pdrgpd_rmercant_provincia" type="text" id="pdrgpd_rmercant_provincia" value="' . esc_attr( pdrgpd_conf_rmercant_provincia() ) . '" class="regular-text" />';
 }
 
+/**
+ * Input fecha de inscripción.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_rmercant_fecha_callback() {
 	echo '<input name="pdrgpd_rmercant_fecha" type="text" id="pdrgpd_rmercant_fecha" value="' . esc_attr( pdrgpd_conf_rmercant_fecha() ) . '" class="regular-text" />';
 }
 
+/**
+ * Input hoja de presentación.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_rmercant_presentacion_callback() {
 	echo '<input name="pdrgpd_rmercant_presentacion" type="text" id="pdrgpd_rmercant_presentacion" value="' . esc_attr( pdrgpd_conf_rmercant_presentacion() ) . '" class="regular-text" />';
 }
 
+/**
+ * Input sección.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_rmercant_seccion_callback() {
 	echo '<input name="pdrgpd_rmercant_seccion" type="text" id="pdrgpd_rmercant_seccion" value="' . esc_attr( pdrgpd_conf_rmercant_seccion() ) . '" class="regular-text" />';
 }
 
+/**
+ * Input libro.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_rmercant_libro_callback() {
 	echo '<input name="pdrgpd_rmercant_libro" type="text" id="pdrgpd_rmercant_libro" value="' . esc_attr( pdrgpd_conf_rmercant_libro() ) . '" class="regular-text" />';
 }
 
+/**
+ * Input tomo.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_rmercant_tomo_callback() {
 	echo '<input name="pdrgpd_rmercant_tomo" type="text" id="pdrgpd_rmercant_tomo" value="' . esc_attr( pdrgpd_conf_rmercant_tomo() ) . '" class="regular-text" />';
 }
 
+/**
+ * Input folio.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_rmercant_folio_callback() {
 	echo '<input name="pdrgpd_rmercant_folio" type="text" id="pdrgpd_rmercant_folio" value="' . esc_attr( pdrgpd_conf_rmercant_folio() ) . '" class="regular-text" />';
 }
 
+/**
+ * Input hoja.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_rmercant_hoja_callback() {
 	echo '<input name="pdrgpd_rmercant_hoja" type="text" id="pdrgpd_rmercant_hoja" value="' . esc_attr( pdrgpd_conf_rmercant_hoja() ) . '" class="regular-text" />';
 }
 
+/**
+ * Input protocolo.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_rmercant_protocolo_callback() {
 	echo '<input name="pdrgpd_rmercant_protocolo" type="text" id="pdrgpd_rmercant_protocolo" value="' . esc_attr( pdrgpd_conf_rmercant_protocolo() ) . '" class="regular-text" />';
 }
 
+/**
+ * Input número.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_rmercant_num_callback() {
 	echo '<input name="pdrgpd_rmercant_num" type="text" id="pdrgpd_rmercant_num" value="' . esc_attr( pdrgpd_conf_rmercant_num() ) . '" class="regular-text" />';
 }
 
+/*
+ * ------------------------------------------------------------------------
+ * Campos de datos del sitio
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * Texto descriptivo para la sección “Datos del sitio”.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_seccion_sitio_callback() {
 	esc_html_e( 'Site build data.', 'proteccion-datos-rgpd' );
 }
 
+/**
+ * Input nombre del sitio.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_sitio_callback() {
 	echo '<input name="pdrgpd_sitio" type="text" id="pdrgpd_sitio" value="' . esc_attr( pdrgpd_conf_sitio() ) . '" class="regular-text" />';
 }
 
+/**
+ * Input dominio del sitio.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_dominio_callback() {
 	echo '<input name="pdrgpd_dominio" type="text" id="pdrgpd_dominio" value="' . esc_attr( pdrgpd_conf_dominio() ) . '" class="regular-text" />';
 }
 
+/**
+ * Checkbox para crear automáticamente páginas legales.
+ *
+ * Solo se muestra si falta alguna de las tres.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 /** Ofrece crear las páginas legales si faltan */
 function pdrgpd_crear_paginas_legales_callback() {
+	wp_nonce_field( 'pdrgpd_crear_legales', '_pdrgpd_nonce' );
 	pdrgpd_ofrece_paginas_legales();
 }
 
+/**
+ * Input URL del aviso legal.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_uri_aviso_callback() {
 	echo '<input name="pdrgpd_uri_aviso" type="text" id="pdrgpd_uri_aviso" value="' . esc_attr( pdrgpd_conf_uri_aviso() ) . '" class="regular-text" />';
 	echo '<p class="description" id="tagline-description">Dirección donde se ubica o ubicará el aviso legal.<br /><br />';
@@ -635,6 +889,12 @@ function pdrgpd_uri_aviso_callback() {
 	echo '</p>';
 }
 
+/**
+ * Input URL de la política de privacidad.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_uri_privacidad_callback() {
 	echo '<input name="pdrgpd_uri_privacidad" type="text" id="pdrgpd_uri_privacidad" value="' . esc_attr( pdrgpd_conf_uri_privacidad() ) . '" class="regular-text" />';
 	echo '<p class="description" id="tagline-description">Dirección donde se ubica o ubicará la política de privacidad acorde al RGPD.<br />';
@@ -642,6 +902,12 @@ function pdrgpd_uri_privacidad_callback() {
 	echo '</p>';
 }
 
+/**
+ * Input URL de la política de cookies.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_uri_cookies_callback() {
 	echo '<input name="pdrgpd_uri_cookies" type="text" id="pdrgpd_uri_cookies" value="' . esc_attr( pdrgpd_conf_uri_cookies() ) . '" class="regular-text" />';
 	echo '<p class="description" id="tagline-description">Dirección donde se ubica o ubicará la política de cookies.<br />';
@@ -649,22 +915,63 @@ function pdrgpd_uri_cookies_callback() {
 	echo '</p>';
 }
 
+/*
+ * ------------------------------------------------------------------------
+ * Campos de privacidad (formularios)
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * Texto descriptivo para la sección “Política de privacidad”.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_seccion_privacidad_callback() {
 	echo wp_kses_post( __( 'Specific data to follow up privacy policy agreeable to General Data Protection Regulation (GDPR).<br />Fill appropriate fields.', 'proteccion-datos-rgpd' ) );
 	echo '<p class="description" id="tagline-description">La ley obliga a que todos los formularios que recojan datos personales muestren información resumida sobre su uso.</p>';
 }
 
+/**
+ * Texto descriptivo para la sección “Apariencia”.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_seccion_aspecto_callback() {
 	esc_html_e( 'Optional settings for data displaying.', 'proteccion-datos-rgpd' );
 }
 
+/*
+ * ------------------------------------------------------------------------
+ * Campos de apariencia
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * Radio buttons para elegir formato de “primera capa” (tabla o párrafo).
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_formato_primera_capa_callback() {
 	echo '<input type="radio" name="pdrgpd_formato_primera_capa" value="tabla" ' . checked( 'tabla', pdrgpd_conf_formato_primera_capa(), false ) . '>' . esc_html__( 'Table', 'proteccion-datos-rgpd' );
 	echo ' <span class="description" id="tagline-description">' . esc_html__( '(AEPD recommendation).', 'proteccion-datos-rgpd' ) . '</span><br />';
 	echo '<input type="radio" name="pdrgpd_formato_primera_capa" value="parrafo" ' . checked( 'parrafo', pdrgpd_conf_formato_primera_capa(), false ) . '>' . esc_html__( 'Paragraph', 'proteccion-datos-rgpd' );
 }
 
-/** Contact form / Formulario de contacto- */
+/*
+ * ------------------------------------------------------------------------
+ * Contact form / Formulario de contacto
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * Checkbox “Existe formulario de contacto”.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_existencia_formulario_contacto_callback() {
 	echo "<input type='checkbox' name='pdrgpd_existencia_formulario_contacto' ";
 	checked( get_option( 'pdrgpd_existencia_formulario_contacto' ), 1 );
@@ -676,16 +983,34 @@ function pdrgpd_existencia_formulario_contacto_callback() {
 	echo ' para más información.</p>';
 }
 
+/**
+ * Input texto resumen de finalidad del formulario de contacto.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_finalidad_formulario_contacto_mini_callback() {
 	echo '<input name="pdrgpd_finalidad_formulario_contacto_mini" type="text" id="pdrgpd_finalidad_formulario_contacto_mini" value="' . esc_attr( pdrgpd_conf_finalidad_formulario_contacto_mini() ) . '" class="regular-text" />';
 	echo '<p class="description" id="tagline-description">Texto que se incluirá en el formulario de contacto, modifícalo si el resultado no es de tu agrado.</p>';
 }
 
+/**
+ * Textarea explicación larga de finalidad del formulario de contacto.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_finalidad_formulario_contacto_callback() {
 	echo '<textarea cols="50" rows="5" name="pdrgpd_finalidad_formulario_contacto">' . esc_html( pdrgpd_conf_finalidad_formulario_contacto() ) . '</textarea>';
 	echo '<p class="description" id="tagline-description">Opcionalmente, un mayor detalle de la finalidad del formulario de contacto para mostrar en la política de privacidad.</p>';
 }
 
+/**
+ * Checkbox “El formulario se filtra con Akismet”.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_akismet_formulario_contacto_callback() {
 	echo "<input type='checkbox' name='pdrgpd_akismet_formulario_contacto' ";
 	checked( get_option( 'pdrgpd_akismet_formulario_contacto' ), 1 );
@@ -694,7 +1019,18 @@ function pdrgpd_akismet_formulario_contacto_callback() {
 	echo '<p class="description" id="tagline-description">Marca la casilla si el formulario de contacto se filtra mediante Akismet.</p>';
 }
 
-/** Newsletter / Boletín */
+/*
+ * ------------------------------------------------------------------------
+ * Newsletter / Boletín
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * Checkbox “Existe boletín/newsletter”.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_existencia_boletin_callback() {
 	echo "<input type='checkbox' name='pdrgpd_existencia_boletin' ";
 	checked( get_option( 'pdrgpd_existencia_boletin' ), 1 );
@@ -706,17 +1042,41 @@ function pdrgpd_existencia_boletin_callback() {
 	echo ' para más información.</p>';
 }
 
+/**
+ * Input texto resumen de finalidad del boletín.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_finalidad_suscripcion_boletin_mini_callback() {
 	echo '<input name="pdrgpd_finalidad_suscripcion_boletin_mini" type="text" id="pdrgpd_finalidad_suscripcion_boletin_mini" value="' . esc_attr( pdrgpd_conf_finalidad_suscripcion_boletin_mini() ) . '" class="regular-text" />';
 	echo '<p class="description" id="tagline-description">Texto que se incluirá en el formulario de suscripción a boletines/newsletters, modifícalo si el resultado no es de tu agrado.</p>';
 }
 
+
+/**
+ * Textarea explicación larga de finalidad del boletín.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_finalidad_suscripcion_boletin_callback() {
 	echo '<textarea cols="50" rows="5" name="pdrgpd_finalidad_suscripcion_boletin">' . esc_html( pdrgpd_conf_finalidad_suscripcion_boletin() ) . '</textarea>';
 	echo '<p class="description" id="tagline-description">Opcionalmente, un mayor detalle de la finalidad del formulario de suscripción al boletín/newsletter para mostrar en la política de privacidad.</p>';
 }
 
-/** Formulario de comentar / // Comment form. */
+/*
+ * ------------------------------------------------------------------------
+ * Formulario de comentar / // Comment form.
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * Checkbox “Aplicar RGPD al formulario de comentarios”.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_aplicar_formulario_comentar_callback() {
 	echo "<input type='checkbox' name='pdrgpd_aplicar_formulario_comentar' ";
 	checked( get_option( 'pdrgpd_aplicar_formulario_comentar' ), 1 );
@@ -737,16 +1097,37 @@ function pdrgpd_aplicar_formulario_comentar_callback() {
 	}
 }
 
+/**
+ * Input texto resumen de finalidad del formulario de comentarios.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_finalidad_formulario_comentar_mini_callback() {
 	echo '<input name="pdrgpd_finalidad_formulario_comentar_mini" type="text" id="pdrgpd_finalidad_formulario_comentar_mini" value="' . esc_attr( pdrgpd_conf_finalidad_formulario_comentar_mini() ) . '" class="regular-text" />';
 	echo '<p class="description" id="tagline-description">Texto que se incluirá en el formulario de comentar, modifícalo si el resultado no es de tu agrado.</p>';
 }
 
+/**
+ * Textarea explicación larga de finalidad del formulario de comentarios.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_finalidad_formulario_comentar_callback() {
 	echo '<textarea cols="50" rows="5" name="pdrgpd_finalidad_formulario_comentar">' . esc_html( pdrgpd_conf_finalidad_formulario_comentar() ) . '</textarea>';
 	echo '<p class="description" id="tagline-description">Opcionalmente, un mayor detalle de la finalidad del formulario de comentar para mostrar en la política de privacidad.</p>';
 }
 
+/**
+ * Checkbox “Existe suscripción vía Jetpack”.
+ *
+ * Solo aparece si Jetpack está activo y el módulo de suscripciones
+ * está habilitado.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_existencia_suscripcion_jetpack_callback() {
 	if ( class_exists( 'Jetpack' ) ) {
 		if ( pdrgpd_modulo_jetpack_suscripciones_activo() ) {
@@ -764,7 +1145,18 @@ function pdrgpd_existencia_suscripcion_jetpack_callback() {
 	}
 }
 
-/** Inserciones. */
+/*
+ * ------------------------------------------------------------------------
+ * Inserciones
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * Texto descriptivo para la sección “Inserción de cookies”.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_seccion_cookies_callback() {
 	esc_html_e( 'You must require permission to load non mandatory cookies.', 'proteccion-datos-rgpd' );
 	echo ' ';
@@ -773,17 +1165,46 @@ function pdrgpd_seccion_cookies_callback() {
 	echo '<br />';
 }
 
+/*
+ * ------------------------------------------------------------------------
+ * Campos de cookies
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * Input Google Analytics Measurement ID.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_google_analytics_id_callback() {
 	echo '<input name="pdrgpd_google_analytics_id" type="text" id="pdrgpd_google_analytics_id" value="' . esc_attr( pdrgpd_conf_google_analytics_id() ) . '" class="regular-text" />';
 	echo '<p class="description" id="tagline-description">' . esc_html__( 'Insert', 'proteccion-datos-rgpd' ) . ' <a href="https://analytics.google.com/" target="_blank">Google Analytics</a> ' . esc_html__( 'and', 'proteccion-datos-rgpd' ) . ' <a href="https://ads.google.com/" target="_blank">Ads</a> ' . esc_html__( 'Tracking Code with this Measurement ID', 'proteccion-datos-rgpd' ) . '.</p>';
 }
 
+/**
+ * Input Facebook Pixel ID.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_facebook_pixel_id_callback() {
 	echo '<input name="pdrgpd_facebook_pixel_id" type="text" id="pdrgpd_facebook_pixel_id" value="' . esc_attr( pdrgpd_conf_facebook_pixel_id() ) . '" class="regular-text" />';
 	echo '<p class="description" id="tagline-description">' . esc_html__( 'Insert', 'proteccion-datos-rgpd' ) . ' <a href="https://www.facebook.com/events_manager2/list/get_started" target="_blank">Facebook Pixel</a> ' . esc_html__( 'code with this ID', 'proteccion-datos-rgpd' ) . '.</p>';
 }
 
-/** Page footer / Pie de página. */
+/*
+ * ------------------------------------------------------------------------
+ * Page footer / Pie de página.
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * Texto descriptivo para la sección “Pie de página”.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_seccion_pie_callback() {
 	esc_html_e( 'Page footer included data.', 'proteccion-datos-rgpd' );
 	echo '<br />';
@@ -797,6 +1218,12 @@ function pdrgpd_seccion_pie_callback() {
 	echo '</b>.<br />';
 }
 
+/**
+ * Checkbox mostrar enlace a aviso legal en el pie.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_pie_enlace_legal_callback() {
 	echo "<input type='checkbox' name='pdrgpd_pie_enlace_legal' ";
 	checked( get_option( 'pdrgpd_pie_enlace_legal' ), 1 );
@@ -804,6 +1231,12 @@ function pdrgpd_pie_enlace_legal_callback() {
 	esc_html_e( 'Link to legal notice at page footer', 'proteccion-datos-rgpd' );
 }
 
+/**
+ * Checkbox mostrar enlace a política de privacidad en el pie.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_pie_enlace_privacidad_callback() {
 	echo "<input type='checkbox' name='pdrgpd_pie_enlace_privacidad' ";
 	checked( get_option( 'pdrgpd_pie_enlace_privacidad' ), 1 );
@@ -811,6 +1244,12 @@ function pdrgpd_pie_enlace_privacidad_callback() {
 	esc_html_e( 'Link to privacy policy at page footer', 'proteccion-datos-rgpd' );
 }
 
+/**
+ * Checkbox mostrar enlace a política de cookies en el pie.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_pie_enlace_cookies_callback() {
 	echo "<input type='checkbox' name='pdrgpd_pie_enlace_cookies' ";
 	checked( get_option( 'pdrgpd_pie_enlace_cookies' ), 1 );
@@ -818,11 +1257,23 @@ function pdrgpd_pie_enlace_cookies_callback() {
 	esc_html_e( 'Link to cookies policy at page footer', 'proteccion-datos-rgpd' );
 }
 
+/**
+ * Input año inicial para el copyright.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_pie_copyright_callback() {
 	echo '<input name="pdrgpd_pie_copyright" type="text" id="pdrgpd_pie_copyright" value="' . esc_attr( pdrgpd_conf_pie_copyright() ) . '" class="regular-text" />';
 	echo '<p class="description" id="tagline-description">' . esc_html__( 'Site creation year if you want a page footer copyright notice, blank if undesired', 'proteccion-datos-rgpd' ) . '.</p>';
 }
 
+/**
+ * Checkbox pie en varias líneas (enlaces separados de copyright).
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_pie_multilinea_callback() {
 	echo "<input type='checkbox' name='pdrgpd_pie_multilinea' ";
 	checked( get_option( 'pdrgpd_pie_multilinea' ), 1 );
@@ -830,7 +1281,21 @@ function pdrgpd_pie_multilinea_callback() {
 	esc_html_e( 'Distinct lines for links and copyright', 'proteccion-datos-rgpd' );
 }
 
-/** Other functions / Otras funciones. */
+/*
+ * ------------------------------------------------------------------------
+ * Funciones auxiliares
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * Muestra el estado de una página legal (existe, shortcode correcto, etc.).
+ *
+ * @since 1.0.0
+ *
+ * @param string $url      URL completa de la página.
+ * @param string $shortcode Shortcode que debe contener.
+ * @return void
+ */
 function pdrgpd_advertencia_pagina_legal( $url, $shortcode ) {
 	if ( pdrgpd_bajo_control_wp( $url ) ) {
 		$pagina = pdrgpd_carga_pagina_sitio( $url );
@@ -850,6 +1315,14 @@ function pdrgpd_advertencia_pagina_legal( $url, $shortcode ) {
 	}
 }
 
+/**
+ * Comprueba si una URL pertenece a la instalación actual.
+ *
+ * @since 1.0.0
+ *
+ * @param string $url URL a comprobar.
+ * @return bool
+ */
 function pdrgpd_bajo_control_wp( $url ) {
 	$controlada = false;
 	if ( strpos( $url, get_bloginfo( 'wpurl' ) ) !== false ) {
@@ -858,6 +1331,14 @@ function pdrgpd_bajo_control_wp( $url ) {
 	return $controlada;
 }
 
+/**
+ * Carga el objeto WP_Post de una página dada su URL.
+ *
+ * @since 1.0.0
+ *
+ * @param string $url URL completa.
+ * @return WP_Post|null Objeto post o null si no existe.
+ */
 function pdrgpd_carga_pagina_sitio( $url ) {
 	// Retira la URL get_bloginfo( 'wpurl' ) . '/' para quedarse con el slug.
 	// Antes de llamar a esta funcion ya sabemos que sí es del sitio.
@@ -865,6 +1346,16 @@ function pdrgpd_carga_pagina_sitio( $url ) {
 	return get_page_by_path( $slug );
 }
 
+/**
+ * Detecta si un shortcode (o su versión extendida) existe en el contenido
+ * de una página.
+ *
+ * @since 1.0.0
+ *
+ * @param WP_Post $pagina   Objeto post.
+ * @param string  $shortcode Shortcode sin corchetes.
+ * @return bool
+ */
 function pdrgpd_existe_shortcode_o_derivado_en_pagina_sitio( $pagina, $shortcode ) {
 	$existe = false;
 	// echo $slug . ': ' . get_the_title( $pagina ) . '</p>' ;
@@ -877,6 +1368,14 @@ function pdrgpd_existe_shortcode_o_derivado_en_pagina_sitio( $pagina, $shortcode
 	return $existe;
 }
 
+/**
+ * Genera un enlace `<a target="_blank">` al título de una página WP.
+ *
+ * @since 1.0.0
+ *
+ * @param string $url URL interna.
+ * @return string HTML del enlace.
+ */
 function pdrgpd_enlace_pagina_wp( $url ) {
 	$pagina = pdrgpd_carga_pagina_sitio( $url );
 	// Verifica si $pagina no es null y es un objeto.
@@ -890,7 +1389,14 @@ function pdrgpd_enlace_pagina_wp( $url ) {
 	return $html;
 }
 
-/** Retira la URL get_bloginfo( 'wpurl' ) . '/' para quedarse con el slug. */
+/**
+ * Extrae el slug de una URL perteneciente al sitio.
+ *
+ * @since 1.0.0
+ *
+ * @param string $url URL completa.
+ * @return string Slug o cadena vacía.
+ */
 function pdrgpd_slug_pagina( $url ) {
 	$slug = '';
 	if ( pdrgpd_bajo_control_wp( $url ) ) {
@@ -899,9 +1405,16 @@ function pdrgpd_slug_pagina( $url ) {
 	return $slug;
 }
 
-/** Creación de páginas legales. */
+/**
+ * Ofrece crear páginas legales si faltan.
+ *
+ * Imprime el checkbox y la descripción. Solo se muestra cuando
+ * `pdrgpd_faltan_paginas_legales()` es true.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_ofrece_paginas_legales() {
-	// Ofrece crear las páginas legales si faltan.
 	if ( pdrgpd_faltan_paginas_legales() ) {
 		echo "<input type='checkbox' name='pdrgpd_crear_paginas_legales' ";
 		checked( 1, 1 );
@@ -912,6 +1425,12 @@ function pdrgpd_ofrece_paginas_legales() {
 	}
 }
 
+/**
+ * Determina si falta alguna de las tres páginas legales configuradas.
+ *
+ * @since 1.0.0
+ * @return bool
+ */
 function pdrgpd_faltan_paginas_legales() {
 	// Verifica la existencia de todas las páginas legales configuradas.
 	$faltan = false;
@@ -927,19 +1446,37 @@ function pdrgpd_faltan_paginas_legales() {
 	return $faltan;
 }
 
-function pdrgpd_cear_paginas_legales() {
-	pdrgpd_cear_pagina_legal( pdrgpd_slug_pagina( pdrgpd_conf_uri_aviso() ), 'aviso-legal' );
-	pdrgpd_cear_pagina_legal( pdrgpd_slug_pagina( pdrgpd_conf_uri_privacidad() ), 'privacidad' );
-	pdrgpd_cear_pagina_legal( pdrgpd_slug_pagina( pdrgpd_conf_uri_cookies() ), 'cookies' );
+/**
+ * Crea las tres páginas legales (aviso, privacidad, cookies) si no existen.
+ *
+ * Se ejecuta durante el sanitizado del formulario cuando el usuario
+ * marca la opción “Crear páginas legales”.
+ *
+ * @since 1.0.0
+ * @return void
+ */
+function pdrgpd_crear_paginas_legales() {
+	pdrgpd_crear_pagina_legal( pdrgpd_slug_pagina( pdrgpd_conf_uri_aviso() ), 'aviso-legal' );
+	pdrgpd_crear_pagina_legal( pdrgpd_slug_pagina( pdrgpd_conf_uri_privacidad() ), 'privacidad' );
+	pdrgpd_crear_pagina_legal( pdrgpd_slug_pagina( pdrgpd_conf_uri_cookies() ), 'cookies' );
 }
 
-function pdrgpd_cear_pagina_legal( $slug, $tipo ) {
-	// La página aviso-legal/ ya existe, no se crea.Creada página privacidad2/.La página cookies/ ya existe, no se crea.pdrgpd_cear_paginas_legales
+/**
+ * Crea una página legal individual.
+ *
+ * @since 1.0.0
+ *
+ * @param string $slug    Slug deseado.
+ * @param string $tipo    Tipo: 'aviso-legal', 'privacidad' o 'cookies'.
+ * @return void
+ */
+function pdrgpd_crear_pagina_legal( $slug, $tipo ) {
+	// La página aviso-legal/ ya existe, no se crea.Creada página privacidad2/.La página cookies/ ya existe, no se crea.pdrgpd_crear_paginas_legales
 	// Solo se crea si tiene slug previsto.
 	if ( $slug ) {
 		if ( pdrgpd_existe_pagina( $slug ) ) {
 			// Indicar que ya existe.
-			// echo "La página $slug ya existe, no se crea.";
+			__return_null();
 		} else {
 			// Crear.
 			switch ( $tipo ) {
@@ -976,6 +1513,14 @@ function pdrgpd_cear_pagina_legal( $slug, $tipo ) {
 	}
 }
 
+/**
+ * Envuelve un shortcode con los comentarios de bloque de Gutenberg.
+ *
+ * @since 1.0.0
+ *
+ * @param string $shortcode Shortcode sin corchetes.
+ * @return string Bloque listo para pegar en el editor.
+ */
 function pdrgpd_shortcode_gutenberg( $shortcode ) {
 	$html  = "<!-- wp:shortcode -->\r\n";
 	$html .= '[' . $shortcode . "]\r\n";
@@ -983,6 +1528,14 @@ function pdrgpd_shortcode_gutenberg( $shortcode ) {
 	return $html;
 }
 
+/**
+ * Comprueba si existe una página dado su slug.
+ *
+ * @since 1.0.0
+ *
+ * @param string $slug Slug a comprobar.
+ * @return bool
+ */
 function pdrgpd_existe_pagina( $slug ) {
 	$existe = false;
 	if ( $slug ) {
@@ -994,11 +1547,28 @@ function pdrgpd_existe_pagina( $slug ) {
 	return $existe;
 }
 
+/**
+ * Indica si hay errores de configuración que deban mostrar avisos.
+ *
+ * Actualmente siempre devuelve false (placeholder para extensiones futuras).
+ *
+ * @since 1.0.0
+ * @return bool
+ */
 function pdrgpd_errores_config() {
 	$errores = false;
 	return $errores;
 }
 
+/**
+ * Función temporal para registrar cadenas en el dominio de texto.
+ *
+ * No ejecuta código, solo fuerza la detección de traducciones.
+ *
+ * @since 1.0.0
+ * @return void
+ */
 function pdrgpd_traducir_para_posteriores() {
-	// $temporal  = __( '' , 'proteccion-datos-rgpd' );
+	/* // $temporal  = __( '' , 'proteccion-datos-rgpd' ); */
+	__return_null();
 }

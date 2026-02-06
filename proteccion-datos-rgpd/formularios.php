@@ -17,7 +17,26 @@
 
 defined( 'ABSPATH' ) || die( 'No se permite el acceso.' );
 
-/** Primera capa del deber de información. */
+/*
+ * ------------------------------------------------------------------------
+ * Primera capa del deber de información (art. 13 RGPD)
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * Devuelve el HTML de la “primera capa” del deber de información.
+ *
+ * Según la configuración del plugin elige entre formato tabla o párrafo.
+ *
+ * @since 1.0.0
+ *
+ * @param string $finalidad     Texto breve de la finalidad.
+ * @param string $transferencia Nombre del cesionario (vacío = “no se ceden datos”).
+ * @param string $responsable   Nombre del responsable (vacío = se usa shortcode).
+ * @param string $url_privacidad URL personalizada de política (vacío = shortcode).
+ * @param string $gestion       URL de ejercicio de derechos (vacío = se usa la de política).
+ * @return string               HTML listo para mostrar (ya procesa shortcodes).
+ */
 function pdrgpd_deber_informacion_primera_capa( $finalidad, $transferencia, $responsable, $url_privacidad, $gestion ) {
 	$formato = pdrgpd_conf_formato_primera_capa();
 	if ( 'tabla' === $formato ) {
@@ -28,7 +47,18 @@ function pdrgpd_deber_informacion_primera_capa( $finalidad, $transferencia, $res
 	return do_shortcode( $html );
 }
 
-/** Versión en párrafo de primera capa del deber de información. */
+/**
+ * Renderiza la primera capa en formato párrafo.
+ *
+ * @since 1.0.0
+ *
+ * @param string $finalidad     Ver descripción en pdrgpd_deber_informacion_primera_capa().
+ * @param string $transferencia Ver descripción en pdrgpd_deber_informacion_primera_capa().
+ * @param string $responsable   Ver descripción en pdrgpd_deber_informacion_primera_capa().
+ * @param string $url_privacidad Ver descripción en pdrgpd_deber_informacion_primera_capa().
+ * @param string $gestion       Ver descripción en pdrgpd_deber_informacion_primera_capa().
+ * @return string               HTML completo del párrafo.
+ */
 function pdrgpd_parrafo_primera_capa( $finalidad, $transferencia, $responsable, $url_privacidad, $gestion ) {
 	$html  = '<p class="pdrgpd_primeracapa">';
 	$html .= '<strong>' . __( 'Basic data protection information: ', 'proteccion-datos-rgpd' ) . '</strong>';
@@ -55,7 +85,18 @@ function pdrgpd_parrafo_primera_capa( $finalidad, $transferencia, $responsable, 
 	return $html;
 }
 
-/** Versión en tabla de primera capa del deber de información. */
+/**
+ * Renderiza la primera capa en formato tabla (recomendado por la AEPD).
+ *
+ * @since 1.0.0
+ *
+ * @param string $finalidad     Ver descripción en pdrgpd_deber_informacion_primera_capa().
+ * @param string $transferencia Ver descripción en pdrgpd_deber_informacion_primera_capa().
+ * @param string $responsable   Ver descripción en pdrgpd_deber_informacion_primera_capa().
+ * @param string $url_privacidad Ver descripción en pdrgpd_deber_informacion_primera_capa().
+ * @param string $gestion       Ver descripción en pdrgpd_deber_informacion_primera_capa().
+ * @return string               HTML completo de la tabla.
+ */
 function pdrgpd_tabla_primera_capa( $finalidad, $transferencia, $responsable, $url_privacidad, $gestion ) {
 	$html  = "<table class=\"pdrgpd_primeracapa\">\n";
 	$html .= pdrgpd_titulo_tabla_primera_capa();
@@ -64,7 +105,7 @@ function pdrgpd_tabla_primera_capa( $finalidad, $transferencia, $responsable, $u
 	} else {
 		$html .= pdrgpd_fila_tabla_primera_capa( __( 'Responsible', 'proteccion-datos-rgpd' ), '[pdrgpd-titular] ' . pdrgpd_enlace_mas_info( $url_privacidad, 'responsable' ) );
 	}
-	// Se hace traducción cruzada de la finalidad. De este modo, unsitio encastellano que tiene configurado el texto por defecto, lo puede mostrar en otros idiomas si procede.
+	// Se hace traducción cruzada de la finalidad. De este modo, un sitio en castellano que tiene configurado el texto por defecto, lo puede mostrar en otros idiomas si procede.
 	$html .= pdrgpd_fila_tabla_primera_capa( __( 'Purpose', 'proteccion-datos-rgpd' ), esc_html( pdrgpd_finalidad_traducida( $finalidad ) ) . ' ' . pdrgpd_enlace_mas_info( $url_privacidad, 'finalidad' ) );
 	$html .= pdrgpd_fila_tabla_primera_capa( __( 'Legitimation', 'proteccion-datos-rgpd' ), __( 'Consent of the concerned party.', 'proteccion-datos-rgpd' ) . ' ' . pdrgpd_enlace_mas_info( $url_privacidad, 'legitimacion' ) );
 	if ( $transferencia ) {
@@ -82,6 +123,15 @@ function pdrgpd_tabla_primera_capa( $finalidad, $transferencia, $responsable, $u
 	return $html;
 }
 
+/**
+ * Devuelve el enlace “+info...” que apunta a la política de privacidad.
+ *
+ * @since 1.0.0
+ *
+ * @param string $url_privacidad URL personalizada (vacío → shortcode).
+ * @param string $id             Ancla interna (solo si $url_privacidad está vacío).
+ * @return string                HTML del enlace.
+ */
 function pdrgpd_enlace_mas_info( $url_privacidad, $id ) {
 	$html = '<a href="';
 	if ( $url_privacidad ) {
@@ -97,6 +147,12 @@ function pdrgpd_enlace_mas_info( $url_privacidad, $id ) {
 	return $html;
 }
 
+/**
+ * Genera la fila de título de la tabla de primera capa.
+ *
+ * @since 1.0.0
+ * @return string HTML del `<tr><th colspan="2">...</th></tr>`.
+ */
 function pdrgpd_titulo_tabla_primera_capa() {
 	$html  = " <tr>\n";
 	$html .= '  <th colspan=2 class="pdrgpd_primeracapa">' . __( 'Basic information on data protection', 'proteccion-datos-rgpd' ) . "</th>\n";
@@ -104,6 +160,15 @@ function pdrgpd_titulo_tabla_primera_capa() {
 	return $html;
 }
 
+/**
+ * Genera una fila completa de la tabla de primera capa.
+ *
+ * @since 1.0.0
+ *
+ * @param string $titulo    Texto de la columna “th”.
+ * @param string $contenido Texto de la columna “td”.
+ * @return string           HTML del `<tr>`.
+ */
 function pdrgpd_fila_tabla_primera_capa( $titulo, $contenido ) {
 	$html  = " <tr>\n";
 	$html .= pdrgpd_epígrafe_tabla_primera_capa( $titulo, $contenido );
@@ -111,14 +176,35 @@ function pdrgpd_fila_tabla_primera_capa( $titulo, $contenido ) {
 	return $html;
 }
 
+/**
+ * Genera el par de celdas `<th>` y `<td>` de una fila.
+ *
+ * @since 1.0.0
+ *
+ * @param string $titulo    Texto del encabezado.
+ * @param string $contenido Texto del valor.
+ * @return string           HTML de las dos celdas.
+ */
 function pdrgpd_epígrafe_tabla_primera_capa( $titulo, $contenido ) {
 	$html  = " <th class=\"pdrgpd_primeracapa\">$titulo</th>\n";
 	$html .= " <td class=\"pdrgpd_primeracapa\">$contenido</td>\n";
 	return $html;
 }
 
-// Shortcode para añadir en el formulario de contacto la primera capa del deber de información.
-add_shortcode( 'pdrgpd-aviso-formulario-contacto', 'pdrgpd_aviso_formulario_contacto' );
+/*
+ * ------------------------------------------------------------------------
+ * Shortcodes para insertar la primera capa en formularios
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * Shortcode [pdrgpd-aviso-formulario-contacto]
+ *
+ * Imprime la primera capa si el admin ha marcado “Existe formulario de contacto”.
+ *
+ * @since 1.0.0
+ * @return string HTML de la primera capa o cadena vacía.
+ */
 function pdrgpd_aviso_formulario_contacto() {
 	if ( get_option( 'pdrgpd_existencia_formulario_contacto' ) ) {
 		$html = pdrgpd_deber_informacion_primera_capa( pdrgpd_conf_finalidad_formulario_contacto_mini(), pdrgpd_politica_privacidad_transferencia_mini( 'contacto' ), '', '', '' );
@@ -126,9 +212,17 @@ function pdrgpd_aviso_formulario_contacto() {
 		return $html;
 	}
 }
-
 // Shortcode para añadir en el formulario de contacto la primera capa del deber de información.
-add_shortcode( 'pdrgpd-aviso-boletin', 'pdrgpd_aviso_boletin' );
+add_shortcode( 'pdrgpd-aviso-formulario-contacto', 'pdrgpd_aviso_formulario_contacto' );
+
+/**
+ * Shortcode [pdrgpd-aviso-boletin]
+ *
+ * Imprime la primera capa si el admin ha marcado “Existe boletín”.
+ *
+ * @since 1.0.0
+ * @return string HTML de la primera capa o cadena vacía.
+ */
 function pdrgpd_aviso_boletin() {
 	if ( get_option( 'pdrgpd_existencia_boletin' ) ) {
 		$html = pdrgpd_deber_informacion_primera_capa( pdrgpd_conf_finalidad_suscripcion_boletin_mini(), pdrgpd_politica_privacidad_transferencia_mini( 'boletin' ), '', '', '' );
@@ -136,7 +230,29 @@ function pdrgpd_aviso_boletin() {
 		return $html;
 	}
 }
+// Shortcode para añadir en el formulario de contacto la primera capa del deber de información.
+add_shortcode( 'pdrgpd-aviso-boletin', 'pdrgpd_aviso_boletin' );
 
+/*
+ * ------------------------------------------------------------------------
+ * Formulario de comentarios (GDPR obligatorio)
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * Añade el texto de la primera capa **tras** el campo comentario.
+ *
+ * Hook sobre `comment_form_defaults`.
+ *
+ * @since 1.0.0
+ *
+ * @param array $args Array de argumentos del formulario de comentarios.
+ * @return array       Array modificado.
+ */
+function pdrgpd_aviso_tras_form_comentar( $args ) {
+	$args['comment_notes_after'] = pdrgpd_deber_informacion_primera_capa( pdrgpd_conf_finalidad_formulario_comentar_mini(), pdrgpd_politica_privacidad_transferencia_mini( 'comentar' ), '', '', '' );
+	return $args;
+}
 // Texto a añadir tras el formulario de comentarios, si se configuró así.
 // Se puede hacer como texto lineal o como tabla, habrá que elegir.
 if ( get_option( 'pdrgpd_aplicar_formulario_comentar' ) ) {
@@ -145,17 +261,17 @@ if ( get_option( 'pdrgpd_aplicar_formulario_comentar' ) ) {
 		add_filter( 'comment_form_defaults', 'pdrgpd_aviso_tras_form_comentar' );
 	}
 }
-function pdrgpd_aviso_tras_form_comentar( $args ) {
-	$args['comment_notes_after'] = pdrgpd_deber_informacion_primera_capa( pdrgpd_conf_finalidad_formulario_comentar_mini(), pdrgpd_politica_privacidad_transferencia_mini( 'comentar' ), '', '', '' );
-	return $args;
-}
 
-// Añadir checkbox despues del campo Comentario.
-if ( get_option( 'pdrgpd_aplicar_formulario_comentar' ) ) {
-	if ( ! pdrgpd_modulo_jetpack_comentarios_activo() ) {
-		add_filter( 'comment_form_field_comment', 'pdrgpd_comment_form_field_comment' );
-	}
-}
+/**
+ * Añade el checkbox de aceptación **dentro** del campo comentario.
+ *
+ * Hook sobre `comment_form_field_comment`.
+ *
+ * @since 1.0.0
+ *
+ * @param string $comment_field HTML original del campo.
+ * @return string               HTML con el checkbox añadido.
+ */
 function pdrgpd_comment_form_field_comment( $comment_field ) {
 	$comment_field .= '<p class="comment-subscription-form">';
 	$comment_field .= '<input type="checkbox" name="pdrgpd_acepto_politica_privacidad" value="acepto" style="width: auto; -moz-appearance: checkbox; -webkit-appearance: checkbox;" required="required" id="pdrgpd_acepto_politica_privacidad" />';
@@ -165,7 +281,32 @@ function pdrgpd_comment_form_field_comment( $comment_field ) {
 	$comment_field .= '</p>';
 	return do_shortcode( $comment_field );
 }
+// Añadir checkbox despues del campo Comentario.
+if ( get_option( 'pdrgpd_aplicar_formulario_comentar' ) ) {
+	if ( ! pdrgpd_modulo_jetpack_comentarios_activo() ) {
+		add_filter( 'comment_form_field_comment', 'pdrgpd_comment_form_field_comment' );
+	}
+}
 
+/**
+ * Impide enviar el comentario si no se acepta la política.
+ *
+ * Hook sobre `preprocess_comment`.
+ * Muere con mensaje si no se marca la casilla.
+ *
+ * @since 1.0.0
+ *
+ * @param array $fields Datos del comentario en proceso.
+ * @return array        Mismo array si la validación es correcta.
+ */
+function pdrgpd_requiere_aceptar_privacidad( $fields ) {
+	// Sólo se está comprobando si existe la caslla indicando "acepto", no hay mayor proceso de datos.
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing
+	if ( ( ! isset( $_POST['pdrgpd_acepto_politica_privacidad'] ) ) || 'acepto' !== sanitize_text_field( wp_unslash( $_POST['pdrgpd_acepto_politica_privacidad'] ) ) ) {
+		wp_die( '<p><strong>ERROR</strong>: ' . esc_html( __( 'You must accept the privacy policy to send comments', 'proteccion-datos-rgpd' ) ) . '.</p>' . "\n" . '<p><a href=\'javascript:history.back()\'>&laquo; ' . esc_html( __( 'Return', 'proteccion-datos-rgpd' ) ) . '</a></p>' );
+	}
+	return $fields;
+}
 // Fuerza aceptar la política de privacidad salvo en el escritorio del administrador.
 if ( ! is_admin() ) {
 	if ( get_option( 'pdrgpd_aplicar_formulario_comentar' ) ) {
@@ -174,34 +315,58 @@ if ( ! is_admin() ) {
 		}
 	}
 }
-function pdrgpd_requiere_aceptar_privacidad( $fields ) {
-	if ( ( ! isset( $_POST['pdrgpd_acepto_politica_privacidad'] ) ) || 'acepto' !== $_POST['pdrgpd_acepto_politica_privacidad'] ) {
-		wp_die( '<p><strong>ERROR</strong>: ' . esc_html( __( 'You must accept the privacy policy to send comments', 'proteccion-datos-rgpd' ) ) . '.</p>' . "\n" . '<p><a href=\'javascript:history.back()\'>&laquo; ' . esc_html( __( 'Return', 'proteccion-datos-rgpd' ) ) . '</a></p>' );
-	}
-	return $fields;
-}
 
-// Guarda el valor d la casilla de aceptar la privacidad en la tabla comment metadata.
+/**
+ * Guarda la aceptación en el meta del comentario.
+ *
+ * Hook sobre `comment_post`.
+ *
+ * @since 1.0.0
+ *
+ * @param int $comment_id ID del comentario recién creado.
+ * @return void
+ */
+function pdrgpd_aceptacion_privacidad_grabar( $comment_id ) {
+	// Sólo se agrega la gestión de la casilla de aceptar sin cambiar la lógica original del formulario.
+	// Comentarios públicos: no se usa nonce para mantener compatibilidad con el sistema core de comentarios.
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing
+	if ( ( isset( $_POST['pdrgpd_acepto_politica_privacidad'] ) ) && 'acepto' === sanitize_text_field( wp_unslash( $_POST['pdrgpd_acepto_politica_privacidad'] ) ) ) {
+			add_comment_meta( absint( $comment_id ), 'pdrgpd_acepto_politica_privacidad', 'acepto', true );
+	}
+}
+// Guarda el valor de la casilla de aceptar la privacidad en la tabla comment metadata.
 if ( get_option( 'pdrgpd_aplicar_formulario_comentar' ) ) {
 	add_action( 'comment_post', 'pdrgpd_aceptacion_privacidad_grabar', 1 );
 }
-function pdrgpd_aceptacion_privacidad_grabar( $post_id ) {
-	if ( isset( $_POST['pdrgpd_acepto_politica_privacidad'] ) ) {
-		$acepta_privacidad = sanitize_text_field( wp_unslash( $_POST['pdrgpd_acepto_politica_privacidad'] ) );
-		if ( $acepta_privacidad ) {
-			add_comment_meta( $post_id, 'pdrgpd_acepto_politica_privacidad', $acepta_privacidad, true );
-		}
-	}
-}
 
+/**
+ * Muestra el valor de la aceptación en wp-admin/edit-comments.php.
+ *
+ * Hook sobre `comment_text` (solo en back-end).
+ *
+ * @since 1.0.0
+ * @return void  Echo directo.
+ */
+function pdrgpd_aceptacion_privacidad_mostrar() {
+	echo esc_html( get_comment_text() ), '<br><br><strong>Política privacidad: ', esc_html( get_comment_meta( get_comment_ID(), 'pdrgpd_acepto_politica_privacidad', 1 ) ), '<strong>';
+}
 // Muestra la la aceptación de la política de privacidad en la página de administración de comentarios wp-admin/edit-comments.php.
 if ( is_admin() ) {
 	add_action( 'comment_text', 'pdrgpd_aceptacion_privacidad_mostrar' );
 }
-function pdrgpd_aceptacion_privacidad_mostrar() {
-	echo esc_html( get_comment_text() ), '<br><br><strong>Política privacidad: ', esc_html( get_comment_meta( get_comment_ID(), 'pdrgpd_acepto_politica_privacidad', 1 ) ), '<strong>';
-}
 
+/*
+ * ------------------------------------------------------------------------
+ * Utilidades de configuración
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * Devuelve el formato elegido para la primera capa.
+ *
+ * @since 1.0.0
+ * @return string Formato elegido: 'tabla'|'parrafo'
+ */
 /** Valor configurado o por defecto del formato para la primera capa del deber de información. */
 function pdrgpd_conf_formato_primera_capa() {
 	$formato = get_option( 'pdrgpd_formato_primera_capa', 'tabla' );
@@ -211,7 +376,12 @@ function pdrgpd_conf_formato_primera_capa() {
 	return $formato;
 }
 
-/** Valor configurado o por defecto de la existencia de Akismet. */
+/**
+ * Devuelve el valor configurado o por defecto de la existencia de Akismet.
+ *
+ * @since 1.0.0
+ * @return bool
+ */
 function pdrgpd_existe_akismet() {
 	$existe_akismet = false;
 	if ( get_option( 'pdrgpd_aplicar_formulario_comentar' ) ) {
@@ -222,7 +392,12 @@ function pdrgpd_existe_akismet() {
 	return $existe_akismet;
 }
 
-/** Valor configurado o por defecto de la existencia de formulario de suscripcion de Jetpack. */
+/**
+ * Devuelve el valor configurado o por defecto de la existencia de una suscripción Jetpack.
+ *
+ * @since 1.0.0
+ * @return bool
+ */
 function pdrgpd_existe_suscripcion_jetpack() {
 	$existe_suscripcion_jetpack = false;
 	if ( get_option( 'pdrgpd_existencia_suscripcion_jetpack' ) ) {
@@ -231,7 +406,16 @@ function pdrgpd_existe_suscripcion_jetpack() {
 	return $existe_suscripcion_jetpack;
 }
 
-/** Un valor por defecto configurado en español es traducido a francés o inglés para mostrarlo en la primera capa cuando el sitio es multiidioma. */
+/**
+ * Traduce la finalidad por defecto si el sitio es multi-idioma.
+ *
+ * Un valor por defecto configurado en español es traducido a francés o inglés para mostrarlo en la primera capa cuando el sitio es multiidioma.
+ *
+ * @since 1.0.0
+ *
+ * @param string $finalidad Texto guardado en BD.
+ * @return string            Texto traducido al locale actual.
+ */
 function pdrgpd_finalidad_traducida( $finalidad ) {
 	if ( 'Mantener el contacto contigo u otras acciones obligatorias.' === $finalidad || 'Mantenir contacte amb tu o altres accions requerides.' === $finalidad ) {
 		$locale = get_locale();
@@ -248,10 +432,30 @@ function pdrgpd_finalidad_traducida( $finalidad ) {
 	return $finalidad;
 }
 
-// Enable shortcode in Contact Form 7.
-// Habilita shortcodes en Contact Form 7 si está presente.
+/*
+ * ------------------------------------------------------------------------
+ * Compatibilidad con plugins externos
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * Habilita shortcodes dentro de los formularios Contact Form 7.
+ *
+ * Hook sobre `wpcf7_form_elements`.
+ *
+ * @since 1.0.0
+ * @param string $form Formulario CF7.
+ * @return string       Formulario con shortcodes ejecutados.
+ */
 add_filter( 'wpcf7_form_elements', 'do_shortcode' );
 
-// Enable shortcode in HTML widgets.
-// Habilita shortcodes en widgets HTML.
+/**
+ * Habilita shortcodes en widgets de tipo “HTML”.
+ *
+ * Hook sobre `widget_text`.
+ *
+ * @since 1.0.0
+ * @param string $text Contenido del widget.
+ * @return string       Contenido con shortcodes ejecutados.
+ */
 add_filter( 'widget_text', 'do_shortcode' );

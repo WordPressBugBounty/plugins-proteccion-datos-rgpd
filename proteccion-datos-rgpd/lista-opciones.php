@@ -10,7 +10,14 @@
 
 defined( 'ABSPATH' ) || die( 'No se permite el acceso.' );
 
-/** Lista de variables usadas en tabla options. */
+/**
+ * Devuelve el array con los nombres de todas las opciones que gestiona el plugin.
+ *
+ * Utilizado para registrar y sanitizar automáticamente.
+ *
+ * @since 1.0.0
+ * @return string[] Slugs de opciones.
+ */
 function pdrgpd_lista_opciones() {
 	return array(
 		'pdrgpd_version',

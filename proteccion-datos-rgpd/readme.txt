@@ -3,7 +3,7 @@ Contributors: ABCdatos
 Tags: privacidad,rgpd,proteccion,datos,legal
 Requires at least: 4.2
 Tested up to: 6.8
-Stable tag: 0.68
+Stable tag: 0.69
 Requires PHP: 5.3
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -175,6 +175,13 @@ El banner de cookies solo es obligatorio si las usas. En ese caso, además de mo
 3. Ejemplo de política de privacidad.
 
 == Changelog ==
+
+= 0.69 =
+*Jan 24 2026*
+* Nonce check added to control legal pages creation.
+* Improved handling of the privacy acceptance checkbox in comment submissions.
+* Enhanced code documentation.
+* WordPress 6.9 basic compatibility checked.
 
 = 0.68 =
 *Jul 01 2025*
