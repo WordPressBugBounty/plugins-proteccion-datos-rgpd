@@ -3,7 +3,7 @@
  * Plugin Name: Protección de datos - RGPD
  * Plugin URI:  https://taller.abcdatos.net/plugin-rgpd-wordpress/
  * Description: Arrange your site to GDPR (General Data Protection Regulation) and LSSICE as well as other required tasks based on required configurations ettings.
- * Version:     0.69
+ * Version:     0.70
  * Author:      ABCdatos
  * Author URI:  https://taller.abcdatos.net/
  * License:     GPLv2
@@ -93,16 +93,16 @@ function pdrgpd_get_version() {
 
 /** Common functions. */
 
-/** Determina si un código es NIF, CIF o NIE por su sintaxis.
+/** Determina si un código es DNI, NIF o NIE por su sintaxis.
  *
  * @param string $codigo El código a comprobar.
- * @return string        El tipo de código ('DNI', 'CIF', 'NIE').
+ * @return string        El tipo de código ('DNI', 'NIF', 'NIE').
  */
-function pdrgpd_nif_o_cif( $codigo ) {
-	// Determina si es NIF, CIF o NIE por la sintaxis.
+function pdrgpd_tipo_documento( $codigo ) {
+	// Determina si es DNI, NIF o NIE por la sintaxis.
 	$tipo = 'DNI';
 	if ( preg_match( '/^[a-z]/i', $codigo ) ) {
-		$tipo = 'CIF';
+		$tipo = 'NIF';
 		if ( preg_match( '/^(x|y|z)/i', $codigo ) ) {
 			$tipo = 'NIE';
 		}

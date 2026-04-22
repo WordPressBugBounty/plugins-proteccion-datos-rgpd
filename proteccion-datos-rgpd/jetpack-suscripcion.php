@@ -15,6 +15,27 @@ if ( pdrgpd_modulo_jetpack_suscripciones_activo() ) {
 	add_shortcode( 'pdrgpd_jetpack_suscripcion', 'pdrgpd_jetpack_do_subscription_form' );
 }
 
+/**
+ * Genera el formulario de suscripción de Jetpack adaptado al RGPD.
+ *
+ * Esta función envuelve el widget de suscripción de Jetpack y modifica su salida
+ * para incluir:
+ * - Una casilla obligatoria de aceptación de la política de privacidad.
+ * - La primera capa de información legal (RGPD).
+ *
+ * Se utiliza como callback del shortcode `pdrgpd_jetpack_suscripcion`.
+ *
+ * @param array $instance {
+ *     Parámetros de configuración del widget de suscripción.
+ *
+ *     @type bool $show_subscribers_total Opcional. Indica si se muestra el total de suscriptores.
+ *     Otros parámetros son heredados de Jetpack_Subscriptions_Widget::defaults().
+ * }
+ *
+ * @return string HTML del formulario de suscripción modificado con los elementos RGPD añadidos.
+ *
+ * @since 1.0.0
+ */
 function pdrgpd_jetpack_do_subscription_form( $instance ) {
 	// Datos para la primera capa de la suscripción mediante Jetpack.
 	$finalidad      = __( 'Inform you of new posts in the site.', 'proteccion-datos-rgpd' );
@@ -28,8 +49,14 @@ function pdrgpd_jetpack_do_subscription_form( $instance ) {
 	}
 	$instance['show_subscribers_total'] = empty( $instance['show_subscribers_total'] ) ? false : true;
 
+	if ( class_exists( 'Jetpack_Subscriptions_Widget' ) ) {
+		$defaults = call_user_func( array( 'Jetpack_Subscriptions_Widget', 'defaults' ) );
+	} else {
+		return '';
+	}
+
 	$instance = shortcode_atts(
-		Jetpack_Subscriptions_Widget::defaults(),
+		$defaults,
 		$instance,
 		'jetpack_subscription_form'
 	);

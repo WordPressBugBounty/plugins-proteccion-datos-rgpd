@@ -44,7 +44,7 @@ function pdrgpd_politica_privacidad_responsable() {
 	if ( 'ca' === $locale ) {
 		$html  = "<h3 id='responsable'>RESPONSABLE DEL TRACTAMENT DE DADES</h3>\n";
 		$html .= '<p>El titular de la web i responsable del tractament de dades és [pdrgpd-titular]';
-		$html .= ', amb ' . pdrgpd_nif_o_cif( pdrgpd_conf_nif() ) . ' [pdrgpd-nif]';
+		$html .= ', amb ' . pdrgpd_tipo_documento( pdrgpd_conf_nif() ) . ' [pdrgpd-nif]';
 		$html .= ', per contactar pots emprar';
 		if ( pdrgpd_conf_email() ) {
 			$html .= ' l\'adreça de correu electrònic [pdrgpd-email]';
@@ -70,7 +70,7 @@ function pdrgpd_politica_privacidad_responsable() {
 	} else {
 		$html  = "<h3 id='responsable'>RESPONSABLE DEL TRATAMIENTO DE DATOS</h3>\n";
 		$html .= '<p>El titular del sitio y responsable del tratamiento de datos es [pdrgpd-titular]';
-		$html .= ', con ' . pdrgpd_nif_o_cif( pdrgpd_conf_nif() ) . ' [pdrgpd-nif]';
+		$html .= ', con ' . pdrgpd_tipo_documento( pdrgpd_conf_nif() ) . ' [pdrgpd-nif]';
 		$html .= ', para contactar puedes utilizar';
 		if ( pdrgpd_conf_email() ) {
 			$html .= ' la dirección de correo electrónico [pdrgpd-email]';
@@ -167,7 +167,7 @@ function pdrgpd_politica_privacidad_legitimacion() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
 		$html  = "<h3 id='legitimacion'>LEGITIMACIÓ DEL TRACTAMENT DE DADES</h3>\n";
-		$html .= '<p>L\'ús de les teves dades s’efectua perquè ens dónes el teu consentiment per utilitzar les que ens proporciones en els formularis per un ús específic que s\'indica en cadascun d\'ells. Totes les teves dades només són necessàries per a usos concrets pels quals se\'t  sol·liciten, si no ho fas, aquests serveis no són possibles.</p>';
+		$html .= '<p>L\'ús de les teves dades s’efectua perquè ens dónes el teu consentiment per utilitzar les que ens proporciones en els formularis per un ús específic que s\'indica en cadascun d\'ells. Totes les teves dades només són necessàries per a usos concrets pels quals se\'t sol·liciten, si no ho fas, aquests serveis no són possibles.</p>';
 	} else {
 		$html  = "<h3 id='legitimacion'>LEGITIMACIÓN DEL TRATAMIENTO DE DATOS</h3>\n";
 		$html .= '<p>El uso de tus datos se realiza porque nos das tu consentimiento para usar los que nos proporcionas en los formularios para un uso específico que se indica en cada uno de ellos. Tus datos solo son necesarios para los usos concretos por los que se te solicitan, si no nos los facilitas, esos servicios no son posibles.</p>';

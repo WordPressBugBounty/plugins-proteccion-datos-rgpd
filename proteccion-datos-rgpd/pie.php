@@ -140,7 +140,7 @@ function pdrgpd_pie_linea_copyright() {
 			$html .= '-' . $anyo_actual;
 		}
 		$html .= ' ';
-		if ( 'CIF' === pdrgpd_nif_o_cif( pdrgpd_conf_nif() ) ) {
+		if ( 'NIF' === pdrgpd_tipo_documento( pdrgpd_conf_nif() ) ) {
 			// Empresas.
 			$html .= pdrgpd_conf_titular();
 		} else {

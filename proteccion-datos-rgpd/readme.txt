@@ -2,8 +2,8 @@
 Contributors: ABCdatos
 Tags: privacidad,rgpd,proteccion,datos,legal
 Requires at least: 4.2
-Tested up to: 6.8
-Stable tag: 0.69
+Tested up to: 7.0
+Stable tag: 0.70
 Requires PHP: 5.3
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -175,6 +175,14 @@ El banner de cookies solo es obligatorio si las usas. En ese caso, además de mo
 3. Ejemplo de política de privacidad.
 
 == Changelog ==
+
+= 0.70 =
+*Apr 22 2026*
+* Added references to RGPD and LOPDGDD in the cookies policy page, extended to include more than cookies.
+* Multiple minor corrections to legal advice and cookies policy pages without noticeable changes.
+* Update from CIF to NIF.
+* Handled missing Jetpack dependency to prevent errors when the subscription widget class is unavailable.
+* WordPress 7.0 basic compatibility checked.
 
 = 0.69 =
 *Jan 24 2026*

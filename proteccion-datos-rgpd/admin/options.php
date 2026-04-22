@@ -154,7 +154,7 @@ function pdrgpd_settings_init() {
 
 	add_settings_field(
 		'pdrgpd_nif',
-		__( 'DNI/NIE/CIF', 'proteccion-datos-rgpd' ),
+		__( 'DNI/NIF/NIE', 'proteccion-datos-rgpd' ),
 		'pdrgpd_nif_callback',
 		'proteccion-datos-rgpd-ajustes',
 		'pdrgpd_seccion_titular'
