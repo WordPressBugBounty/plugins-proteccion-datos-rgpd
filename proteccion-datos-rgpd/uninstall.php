@@ -17,8 +17,8 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || die( 'No se permite el acceso.' );
 require_once plugin_dir_path( __FILE__ ) . 'lista-opciones.php';
 
 // Removes all the option values defined in the array.
-foreach ( pdrgpd_lista_opciones() as $nombre_opcion ) {
-	delete_option( $nombre_opcion );
+foreach ( pdrgpd_lista_opciones() as $pdrgpd_nombre_opcion ) {
+	delete_option( $pdrgpd_nombre_opcion );
 	// For site options in multisite.
-	delete_site_option( $nombre_opcion );
+	delete_site_option( $pdrgpd_nombre_opcion );
 }

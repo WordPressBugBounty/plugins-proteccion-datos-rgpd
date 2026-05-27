@@ -16,6 +16,12 @@ defined( 'ABSPATH' ) || die( 'No se permite el acceso.' );
 function pdrgpd_conf_pie_copyright() {
 	return esc_html( get_option( 'pdrgpd_pie_copyright', pdrgpd_anyo_pie_copyright_propuesto() ) );
 }
+
+/**
+ * Propone el año inicial del copyright a partir del primer post publicado.
+ *
+ * @return string Año propuesto o cadena vacía si procede conservar la configuración histórica.
+ */
 function pdrgpd_anyo_pie_copyright_propuesto() {
 	// Si compara 0.41.0 con 0.41, la 0.41 es anterior.
 	if ( version_compare( get_option( 'pdrgpd_version' ), '0.41' ) < 0 ) {
@@ -23,11 +29,20 @@ function pdrgpd_anyo_pie_copyright_propuesto() {
 		$anyo = '';
 	} else {
 		// Por omisión, el año del primer post, o en su defecto, el actual.
-		global $wpdb;
-		$sql       = "SELECT YEAR(min(post_date_gmt)) FROM $wpdb->posts WHERE post_status = 'publish';";
-		$resultado = $wpdb->get_var( $sql );
-		if ( $resultado ) {
-			$anyo = $resultado;
+		$primeros_posts = get_posts(
+			array(
+				'numberposts'            => 1,
+				'post_status'            => 'publish',
+				'orderby'                => 'date',
+				'order'                  => 'ASC',
+				'fields'                 => 'ids',
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+			)
+		);
+		if ( ! empty( $primeros_posts ) ) {
+			$anyo = get_the_date( 'Y', $primeros_posts[0] );
 		} else {
 			$anyo = gmdate( 'Y' );
 		}
@@ -40,10 +55,20 @@ function pdrgpd_pie_utilizado() {
 	return pdrgpd_pie_linea_copyright_utilizada() || pdrgpd_pie_linea_enlaces_utilizada();
 }
 
+/**
+ * Indica si se utiliza la línea de copyright del pie.
+ *
+ * @return string Valor configurado para el año de copyright, o cadena vacía.
+ */
 function pdrgpd_pie_linea_copyright_utilizada() {
 	return pdrgpd_conf_pie_copyright();
 }
 
+/**
+ * Indica si se utiliza la línea de enlaces legales del pie.
+ *
+ * @return bool Verdadero si hay algún enlace legal activado.
+ */
 function pdrgpd_pie_linea_enlaces_utilizada() {
 	return get_option( 'pdrgpd_pie_enlace_legal' ) || get_option( 'pdrgpd_pie_enlace_privacidad' ) || get_option( 'pdrgpd_pie_enlace_cookies' );
 }
@@ -53,11 +78,22 @@ if ( pdrgpd_pie_utilizado() ) {
 	add_action( 'template_redirect', 'pdrgpd_template_redirect' );
 }
 
+/**
+ * Inicia el buffer de salida para remplazar el pie en temas compatibles.
+ *
+ * @return void
+ */
 function pdrgpd_template_redirect() {
 	ob_start();
 	ob_start( 'pdrgpd_ob_pie_callback' );
 }
 
+/**
+ * Remplaza el bloque de pie de página del tema si se reconoce su estructura.
+ *
+ * @param string $buffer HTML completo capturado por el buffer.
+ * @return string HTML modificado o sin cambios.
+ */
 function pdrgpd_ob_pie_callback( $buffer ) {
 
 	// Genera el código a incorporar en base a la configuración.
@@ -73,7 +109,7 @@ function pdrgpd_ob_pie_callback( $buffer ) {
 
 	// Aplica el código remplazando el bloque si su estructura de conocida. Por defecto, los temas de WP de los últimos años.
 	// Para el resto, comparamos con el nombre del tema en uso y no desperdiciamos recursos.
-	switch ( tema_padre() ) {
+	switch ( pdrgpd_tema_padre() ) {
 		case 'Flash':               // Tema Flash de ThemeGrill.
 			$buffer = preg_replace( '/<span class="copyright-text">(.*?)<\/span>/su', '<span class="copyright-text">' . $pie_completo . '</span>', $buffer );
 			break;
@@ -107,7 +143,7 @@ function pdrgpd_ob_pie_callback( $buffer ) {
 			break;
 		case 'Twenty Twenty-Two':   // Tema Twenty Twenty-Two de WordPress.
 		case 'Twenty Twenty-Three': // Tema Twenty Twenty-Three de WordPress.
-			$buffer = preg_replace( '/<p class="has-text-align-right">(\s|\w)*<a href="https:\/\/(\w)*\.?wordpress\.org" rel="nofollow">WordPress<\/a>\s*<\/p>\s*/ius', '<p class="has-text-align-right">' . $pie_completo . '</p>', $buffer );
+			$buffer = preg_replace( '/<p class="has-text-align-right">(\s|\w)*<a href="https:\/\/(\w)*\.?WordPress\.org" rel="nofollow">WordPress<\/a>\s*<\/p>\s*/ius', '<p class="has-text-align-right">' . $pie_completo . '</p>', $buffer );
 			break;
 		default:                    // Temas originales de WordPress compatibles: Twenty Twelve, Twenty Thirteen, Twenty Fourteen, Twenty Fifteen, Twenty Sixteen, Twenty Seventeen y Twenty Nineteen de WordPress.
 									// También tema Cenote de ThemeGrill.
@@ -152,6 +188,11 @@ function pdrgpd_pie_linea_copyright() {
 	return $html;
 }
 
+/**
+ * Genera la línea de enlaces legales para el pie de página.
+ *
+ * @return string HTML de enlaces legales configurados.
+ */
 function pdrgpd_pie_linea_enlaces() {
 	$html = '';
 	if ( pdrgpd_pie_linea_enlaces_utilizada() ) {
@@ -174,7 +215,7 @@ function pdrgpd_pie_linea_enlaces() {
 				}
 			} elseif ( pdrgpd_conf_uri_privacidad() === pdrgpd_conf_uri_cookies() ) {
 				// translators: %s: URL de la política de privacidad y cookies.
-				$html .= sprintf( __( '<a href="%s">Privacy and cookies policy', 'proteccion-datos-rgpd' ), esc_attr( pdrgpd_conf_uri_privacidad() ) );
+				$html .= sprintf( __( '<a href="%s">Privacy and cookies policy</a>', 'proteccion-datos-rgpd' ), esc_attr( pdrgpd_conf_uri_privacidad() ) );
 			} else {
 				// translators: %1$s: URL de la política de privacidad, %2$s: URL de la política de cookies.
 				$html .= sprintf( __( '<a href="%1$s">Privacy</a> and <a href="%2$s">cookies</a> policies', 'proteccion-datos-rgpd' ), esc_attr( pdrgpd_conf_uri_privacidad() ), esc_attr( pdrgpd_conf_uri_cookies() ) );

@@ -13,6 +13,14 @@ defined( 'ABSPATH' ) || die( 'No se permite el acceso.' );
 // Shortcodes.
 
 add_shortcode( 'pdrgpd-politica-cookies', 'pdrgpd_politica_cookies' );
+/**
+ * Genera la página completa de política de cookies.
+ *
+ * Construye el contenido de la política de cookies concatenando
+ * los shortcodes de sus distintas secciones.
+ *
+ * @return string HTML procesado de la política de cookies.
+ */
 function pdrgpd_politica_cookies() {
 	$html  = "[pdrgpd-politica-cookies-introduccion]\n";
 	$html .= "[pdrgpd-politica-cookies-tipos]\n";
@@ -24,16 +32,23 @@ function pdrgpd_politica_cookies() {
 }
 
 add_shortcode( 'pdrgpd-politica-cookies-introduccion', 'pdrgpd_politica_cookies_introduccion' );
+/**
+ * Genera la introducción de la política de cookies.
+ *
+ * Devuelve el contenido introductorio adaptado al idioma activo del sitio.
+ *
+ * @return string HTML procesado de la introducción de la política de cookies.
+ */
 function pdrgpd_politica_cookies_introduccion() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html  = "<h3>Aquest web utilitza cookies</h3>\n";
+		$html  = "<h2>Aquest web utilitza cookies</h2>\n";
 		$html .= '<p>En compliment de la Llei 34/202 d’11 de juliol dels Serveis de la Societat de la Informació i de Comerç Electrònic (LSSICE), així com en el Reglament (UE) 2016/679 del Parlament Europeu i del Consell, de 27 de abril de 2016 (RGPD), i en la Lley Orgànica 3/2018, de Protecció de Dades Personals i Garantia dels Drets Digitals (LOPDGDD), t\'informem que aquesta web <strong>[pdrgpd-sitio]</strong> utilitza cookies i altres dispositius d\'enmagatcematge i  recuperació de dades.</p>
 <p>La normativa esmentada s\'aplica a qualsevol mena d\'arxiu o dispositiu que es descarregui en l\'equip terminal d\'un usuari amb la finalitat d\' emmagatzemar dades que podran ser actualitzades i recuperades per l\'entitat responsable de la seva instal·lació.</p>
 <p>Les cookies (o galetes, en català) són petits fitxers de text enviats a un navegador des d’un servidor web per registrar activitat de l’usuari en una web de manera que pugui recuperar aquesta informació posteriorment durant la navegació per les diferents pàgines que estan connectades al servidor que les va instal·lar.</p>
 <p>Les <em>cookies</em> acostumen a emmagatzemar informació de caràcter tècnic, preferències personals, personalització de continguts, estadístiques d\'ús, enllaços a xarxes socials, accés a comptes d\'usuaris, etc.</p>';
 	} else {
-		$html  = "<h3>Este sitio utiliza cookies</h3>\n";
+		$html  = "<h2>Este sitio utiliza cookies</h2>\n";
 		$html .= '<p>En cumplimiento de la Ley 34/2002 de 11 de julio de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSICE), así como en el Reglamento (UE) 2016/679 del Parlamento Europeo y del Consejo, de 27 de abril de 2016 (RGPD), y en la Ley Orgánica 3/2018, de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD), te informamos de que este sitio web <strong>[pdrgpd-sitio]</strong> utiliza cookies y otros dispositivos de almacenamiento y recuperación de datos.</p>
 <p>La normativa citada se aplica a cualquier clase de archivo o dispositivo que se descargue en el equipo terminal de un usuario con la finalidad de almacenar datos que podrán ser actualizados y recuperados por la entidad responsable de su instalación.</p>
 <p>Las cookies (en castellano, galletas) son pequeños ficheros de texto enviados a un navegador desde un servidor web para registrar actividad del usuario en un sitio web de modo que se pueda recuperar esa información con posterioridad durante la navegación por las diferentes páginas que estén conectadas al servidor que se las instaló.</p>
@@ -43,25 +58,33 @@ function pdrgpd_politica_cookies_introduccion() {
 }
 
 add_shortcode( 'pdrgpd-politica-cookies-tipos', 'pdrgpd_politica_cookies_tipos' );
+/**
+ * Genera la sección de tipos de cookies.
+ *
+ * Devuelve la clasificación de las cookies según su gestor,
+ * duración y finalidad, adaptada al idioma activo del sitio.
+ *
+ * @return string HTML procesado de la sección de tipos de cookies.
+ */
 function pdrgpd_politica_cookies_tipos() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html  = "<h3>Tipus de cookies</h3>\n";
+		$html  = "<h2>Tipus de cookies</h2>\n";
 		$html .= '<p>A continuació, es fa una classificació de les cookies en funció d’una sèrie de categories. Tanmateix, és necessari tenir en compte que una mateixa cookie pot estar inclosa en més d’una categoria.</p>';
-		$html .= "<h2>Segons l'entitat que les gestiona</h2>\n";
+		$html .= "<h3>Segons l'entitat que les gestiona</h3>\n";
 		$html .= '<p></p>';
 		$html .= '<ul>
 		<li><b>Cookies propies:</b> Són aquelles que s\'envien a l\'equip terminal de l’usuari des d\'un equip o domini gestionat pel propi editor i des del qual es presta el servei sol·licitat per l\'usuari.</li>
 		<li><b>Cookies de tercers:</b> Són aquelles que s\'envien a l\'equip terminal d’usuari des d\'un equip o domini que no és gestionat pel mateix editor, sinó per una altra entitat que tracta les dades obtingudes a través de les cookies.</li>
 	</ul>';
 		$html .= '<p>En el cas de que les cookies estiguin instal·lades des d\'un equip o domini gestionat pel propi editor però la informació que es reculli mitjançant aquestes sigui gestionada per un tercer, no són considerades cookies pròpies.</p>';
-		$html .= "<h2>Segons el termini de temps d'activació</h2>\n";
+		$html .= "<h3>Segons el termini de temps d'activació</h3>\n";
 		$html .= '<p></p>';
 		$html .= '<ul>
 		<li><b>Cookies de sessió:</b> Són un tipus de cookies dissenyades per recavar i emmagatzemar dades mentre l’usuari accedeix a una pàgina web. S’acostumen a utilitzar per emmagatzemar informació que només interessa conservar per la prestació del servei sol·licitat per l’usuari en una única ocasió (pe, una llista de productes comprats).</li>
 		<li><b>Cookies persistents:</b> Són un tipus de cookies en el que les dades siguin emmagatzemades en el terminal i a les que es pot accedir i tractades durant un període definit pel responsable de la cookie i que pot ser d’uns minuts fins a alguns anys.</li>
 	</ul>';
-		$html .= "<h2>Segons la seva finalitat</h2>\n";
+		$html .= "<h3>Segons la seva finalitat</h3>\n";
 		$html .= '<p>Segons la finalitat per la qual es tracten les dades obtingudes a través de les cookies, podem distingir entre:</p>';
 		$html .= '<ul>
 		<li><b>Cookies tècniques:</b> Són aquelles que permeten a l’usuari la navegació a través d’una pàgina web, plataforma o aplicació i la utilització de les diferents opcions o serveis que en ella existeixen, com per exemple, controlar el tràfic i la comunicació de dades, identificar la sessió, accedir a espais d’accés restringit, recordar els elements que integren una comanda, realitzar el procés de compra d’una comanda, realitzar la sol·licitud d’inscripció o participació en un esdeveniment, utilitzar elements de seguretat durant la navegació, emmagatzemar continguts per la difusió de vídeos o so, o compartir continguts a través de les xarxes socials.</li>
@@ -71,22 +94,22 @@ function pdrgpd_politica_cookies_tipos() {
 		<li><b>Cookies de publicitat sobre comportament:</b> Són aquelles que permeten la gestió, de la forma més eficaç possible, dels espais publicitaris que, en el seu cas, l’editor hagi inclòs en una pàgina web, aplicació o plataforma des del qual presta el servei sol·licitat. Aquestes cookies emmagatzemen informació del comportament dels usuaris obtinguda a través de l’observació continuada dels seus hàbits de navegació, el que permet desenvolupar un perfil específic per mostrar publicitat en funció del mateix.</li>
 	</ul>';
 	} else {
-		$html  = "<h3>Tipos de cookies</h3>\n";
+		$html  = "<h2>Tipos de cookies</h2>\n";
 		$html .= '<p>A continuación, se realiza una clasificación de las cookies en función de una serie de categorías. No obstante, es necesario tener en cuenta que una misma cookie puede estar incluida en más de una categoría.</p>';
-		$html .= "<h2>Según la entidad que las gestiona</h2>\n";
+		$html .= "<h3>Según la entidad que las gestiona</h3>\n";
 		$html .= '<p></p>';
 		$html .= '<ul>
 		<li><b>Cookies propias:</b> Son aquellas que  se envían al equipo terminal del usuario desde un equipo o dominio gestionado por el propio editor y desde el que se presta el servicio solicitado por el usuario.</li>
 		<li><b>Cookies de terceros:</b> Son aquellas que se envían al equipo terminal del usuario desde un equipo o dominio que no es gestionado por el editor, sino por otra entidad que trata los datos obtenidos a través de las cookies.</li>
 	</ul>';
 		$html .= '<p>En el caso de que las cookies sean instaladas desde un equipo o dominio gestionado por el propio editor, pero la información que se recoja mediante estas sea gestionada por un tercero, no son consideradas cookies propias.</p>';
-		$html .= "<h2>Según el plazo de tiempo que permanecen activadas</h2>\n";
+		$html .= "<h3>Según el plazo de tiempo que permanecen activadas</h3>\n";
 		$html .= '<p></p>';
 		$html .= '<ul>
 		<li><b>Cookies de sesión:</b> Son un tipo de cookies diseñadas para recabar y almacenar datos mientras el usuario accede a una página web. Se suelen emplear para almacenar información que solo interesa conservar para la prestación del servicio solicitado por el usuario en una sola ocasión (por ejemplo: una lista de productos adquiridos).</li>
 		<li><b>Cookies persistentes:</b> Son un tipo de cookies en el que los datos siguen almacenados en el terminal y pueden ser accedidos y tratados durante un periodo definido por el responsable de la cookie, y que puede ir de unos minutos a varios años.</li>
 	</ul>';
-		$html .= "<h2>Según su finalidad</h2>\n";
+		$html .= "<h3>Según su finalidad</h3>\n";
 		$html .= '<p>Según la finalidad para la que se traten los datos obtenidos a través de las cookies, podemos distinguir entre:</p>';
 		$html .= '<ul>
 		<li><b>Cookies técnicas:</b> Son aquellas que permiten al usuario la navegación a través de una página web, plataforma o aplicación y la utilización de las diferentes opciones o servicios que en ella existan como, por ejemplo, controlar el tráfico y la comunicación de datos, identificar la sesión, acceder a partes de acceso restringido, recordar los elementos que integran un pedido, realizar el proceso de compra de un pedido, realizar la solicitud de inscripción o participación en un evento, utilizar elementos de seguridad durante la navegación, almacenar contenidos para la difusión de videos o sonido o compartir contenidos a través de redes sociales.</li>
@@ -100,10 +123,18 @@ function pdrgpd_politica_cookies_tipos() {
 }
 
 add_shortcode( 'pdrgpd-politica-cookies-gestionar', 'pdrgpd_politica_cookies_gestionar' );
+/**
+ * Genera la sección sobre cómo gestionar o desactivar cookies.
+ *
+ * Devuelve enlaces e instrucciones básicas para desactivar cookies
+ * en los principales navegadores web, adaptadas al idioma activo del sitio.
+ *
+ * @return string HTML procesado de la sección para gestionar cookies.
+ */
 function pdrgpd_politica_cookies_gestionar() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html = '<h3>Com desactivar les cookies en els principals navegadors web</h3>
+		$html = '<h2>Com desactivar les cookies en els principals navegadors web</h2>
 <p>Per configurar l’ús de cookies, segueix les instruccions corresponents al mateix navegador o consulta la seva ajuda: </p>
 <ul>
 <li><a href="https://support.apple.com/es-es/HT201265">Safari</a></li>
@@ -114,7 +145,7 @@ function pdrgpd_politica_cookies_gestionar() {
 <li><a href="https://privacy.microsoft.com/es-es/windows-10-microsoft-edge-and-privacy">Edge</a></li>
 </ul>';
 	} else {
-		$html = '<h3>Cómo desactivar las cookies en los principales navegadores web</h3>
+		$html = '<h2>Cómo desactivar las cookies en los principales navegadores web</h2>
 <p>Para configurar el uso de cookies, sigue las instrucciones correspondientes a tu navegador o consulta su ayuda:</p>
 <ul>
 <li><a href="https://support.apple.com/es-es/HT201265">Safari</a></li>
@@ -129,23 +160,39 @@ function pdrgpd_politica_cookies_gestionar() {
 }
 
 add_shortcode( 'pdrgpd-politica-cookies-necesidad', 'pdrgpd_politica_cookies_necesidad' );
+/**
+ * Genera la sección sobre las consecuencias de no aceptar cookies.
+ *
+ * Devuelve una explicación breve sobre el posible impacto
+ * del rechazo de cookies, adaptada al idioma activo del sitio.
+ *
+ * @return string HTML procesado de la sección sobre la necesidad de cookies.
+ */
 function pdrgpd_politica_cookies_necesidad() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html = '<h3>Qué passa si no s\'accepten les cookies</h3>
+		$html = '<h2>Qué passa si no s\'accepten les cookies</h2>
 <p>El rebuig de les cookies pot impedir l’accés a continguts i serveis personalitzats.</p>';
 	} else {
-		$html = '<h3>Qué sucede si no se aceptan las cookies</h3>
+		$html = '<h2>Qué sucede si no se aceptan las cookies</h2>
 <p>El rechazo de las cookies puede impedir el acceso a contenidos y servicios personalizados.</p>';
 	}
 	return do_shortcode( $html );
 }
 
 add_shortcode( 'pdrgpd-politica-cookies-utilizadas', 'pdrgpd_politica_cookies_utilizadas' );
+/**
+ * Genera la sección de cookies utilizadas en el sitio.
+ *
+ * Devuelve un listado de las cookies utilizadas, adaptado
+ * al idioma activo del sitio.
+ *
+ * @return string HTML procesado de la sección de cookies utilizadas.
+ */
 function pdrgpd_politica_cookies_utilizadas() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html  = '<h3>Cookies utilitzades</h3>
+		$html  = '<h2>Cookies utilitzades</h2>
 <p>En aquesta web utilitzem les següents cookies:</p>
 <ul>';
 		$html .= '<li></li>';
@@ -153,7 +200,7 @@ function pdrgpd_politica_cookies_utilizadas() {
 		$html .= '<li></li>';
 		$html .= '</ul>';
 	} else {
-		$html  = '<h3>Cookies utilizadas</h3>
+		$html  = '<h2>Cookies utilizadas</h2>
 <p>En este sitio utilizamos las siguientes cookies:</p>
 <ul>';
 		$html .= '<li></li>';
@@ -165,29 +212,45 @@ function pdrgpd_politica_cookies_utilizadas() {
 }
 
 add_shortcode( 'pdrgpd-politica-cookies-actualizacion', 'pdrgpd_politica_cookies_actualizacion' );
+/**
+ * Genera la sección de actualizaciones de la política de cookies.
+ *
+ * Devuelve el aviso sobre posibles cambios o modificaciones
+ * en la política de cookies, adaptado al idioma activo del sitio.
+ *
+ * @return string HTML procesado de la sección de actualizaciones.
+ */
 function pdrgpd_politica_cookies_actualizacion() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html = '<h3>Actualitzacions i modificacions en la política de cookies</h3>
+		$html = '<h2>Actualitzacions i modificacions en la política de cookies</h2>
 <p>[pdrgpd-sitio] pot modificar aquesta política de cookies en funció de les exigències legislatives, reglamentàries, amb la finalitat d\'adaptar aquesta política a les instruccions dictades per l\'Agencia Española de Protección de Datos, per qüestions tècniques o de reorganització de la web; per això t\'aconsellem que les visites periòdicament.';
 	} else {
-		$html = '<h3>Actualizaciones y modificaciones en la política de cookies</h3>
+		$html = '<h2>Actualizaciones y modificaciones en la política de cookies</h2>
 <p>[pdrgpd-sitio] puede modificar esta política de cookies en función de las exigencias legislativas, reglamentarias, con la finalidad de adaptar dicha política a las instrucciones dictadas por la Agencia Española de Protección de Datos, por cuestiones técnicas o de reorganización de la web; por ello te aconsejamos que la visites periódicamente.';
 	}
 	return do_shortcode( $html );
 }
 
 add_shortcode( 'pdrgpd-politica-cookies-contacto', 'pdrgpd_politica_cookies_contacto' );
+/**
+ * Genera la sección de contacto de la política de cookies.
+ *
+ * Muestra un correo de contacto para resolver dudas sobre el uso
+ * de cookies, siempre que exista una dirección configurada.
+ *
+ * @return string HTML procesado de la sección de contacto, o una cadena vacía.
+ */
 function pdrgpd_politica_cookies_contacto() {
 	$html = '';
 	if ( pdrgpd_conf_email() ) {
 		$locale = get_locale();
 		if ( 'ca' === $locale ) {
-			$html = '<h3>Contacte</h3>
-<p>Per resoldre qualsevol dubte sobre cóm s\'utilitzen les  cookies, escriu a la direcció de correu electrònic: [pdrgpd-email].';
+			$html = '<h2>Contacte</h2>
+<p>Per resoldre qualsevol dubte sobre cóm s\'utilitzen les  cookies, escriu a la direcció de correu electrònic: [pdrgpd-email].</p>';
 		} else {
-			$html = '<h3>Contacto</h3>
-<p>Para resolver cualquier duda sobre cómo utilizamos las cookies, escríbenos a la dirección de correo electrónico: [pdrgpd-email].';
+			$html = '<h2>Contacto</h2>
+<p>Para resolver cualquier duda sobre cómo utilizamos las cookies, escríbenos a la dirección de correo electrónico: [pdrgpd-email].</p>';
 		}
 	}
 	return do_shortcode( $html );

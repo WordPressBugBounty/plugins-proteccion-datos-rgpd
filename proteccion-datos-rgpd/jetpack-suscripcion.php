@@ -12,7 +12,11 @@
 defined( 'ABSPATH' ) || die( 'No se permite el acceso.' );
 
 if ( pdrgpd_modulo_jetpack_suscripciones_activo() ) {
+	// Se mantienen ambos shortcodes por compatibilidad.
+	// El nombre sin guión (pdrgpd_jetpack_suscripcion) es el original.
+	// El nombre con guión (pdrgpd-jetpack-suscripcion) sigue la convención del plugin.
 	add_shortcode( 'pdrgpd_jetpack_suscripcion', 'pdrgpd_jetpack_do_subscription_form' );
+	add_shortcode( 'pdrgpd-jetpack-suscripcion', 'pdrgpd_jetpack_do_subscription_form' );
 }
 
 /**

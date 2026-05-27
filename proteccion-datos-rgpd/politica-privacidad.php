@@ -13,6 +13,14 @@ defined( 'ABSPATH' ) || die( 'No se permite el acceso.' );
 // Shortcodes.
 
 add_shortcode( 'pdrgpd-politica-privacidad', 'pdrgpd_politica_privacidad' );
+/**
+ * Genera la página completa de política de privacidad.
+ *
+ * Construye el contenido de la política de privacidad concatenando
+ * los shortcodes de sus distintas secciones.
+ *
+ * @return string HTML procesado de la política de privacidad.
+ */
 function pdrgpd_politica_privacidad() {
 	$html  = "[pdrgpd-politica-privacidad-presentacion]\n";
 	$html .= "[pdrgpd-politica-privacidad-responsable]\n";
@@ -24,14 +32,21 @@ function pdrgpd_politica_privacidad() {
 }
 
 add_shortcode( 'pdrgpd-politica-privacidad-presentacion', 'pdrgpd_politica_privacidad_presentacion' );
+/**
+ * Genera la introducción de la política de privacidad.
+ *
+ * Devuelve el contenido introductorio adaptado al idioma activo del sitio.
+ *
+ * @return string HTML procesado de la introducción de la política de privacidad.
+ */
 function pdrgpd_politica_privacidad_presentacion() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html  = "<h3>INTRODUCCIÓ</h3>\n";
+		$html  = "<h2>INTRODUCCIÓ</h2>\n";
 		$html .= '<p>A [pdrgpd-sitio], sensibilitzats amb les necessitats dels usuaris d’Internet i conscients de la importància de la rigorosa privacitat de la informació personal que ens confien, incloem aquesta declaració de privacitat amb l’objecte del fet que siguis conscient de la política en el tractament de les dades personals que s’obtenen dels visitants i usuaris..</p>';
 		$html .= '<p>Com usuari, acceptes aquestes condicions pel sol fet de llegir, visualitzar o navegar en la web. Si no ho acceptes, has d’abandonar la web, sense fer ús d’ella ni del seu contingut, i sense accedir a les pàgines enllaçades.</p>';
 	} else {
-		$html  = "<h3>INTRODUCCIÓN</h3>\n";
+		$html  = "<h2>INTRODUCCIÓN</h2>\n";
 		$html .= '<p>En [pdrgpd-sitio], sensibilizados con las necesidades de los usuarios de Internet y conscientes de la importancia de la rigurosa privacidad de la información personal que nos confían, incluimos esta declaración de privacidad con el objeto de que seas consciente de la política en el tratamiento de los datos personales que obtiene de sus visitantes y usuarios.</p>';
 		$html .= '<p>Como usuario, aceptas estas condiciones por el mero hecho de leer, visualizar o navegar en el sitio. De no aceptarlas, debes abandonar el sitio, sin hacer uso alguno de él y su contenido, y sin acceder a las páginas enlazadas.</p>';
 	}
@@ -39,10 +54,18 @@ function pdrgpd_politica_privacidad_presentacion() {
 }
 
 add_shortcode( 'pdrgpd-politica-privacidad-responsable', 'pdrgpd_politica_privacidad_responsable' );
+/**
+ * Genera la sección del responsable del tratamiento.
+ *
+ * Devuelve la información del responsable de los datos personales,
+ * adaptada al idioma activo del sitio.
+ *
+ * @return string HTML procesado de la sección del responsable.
+ */
 function pdrgpd_politica_privacidad_responsable() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html  = "<h3 id='responsable'>RESPONSABLE DEL TRACTAMENT DE DADES</h3>\n";
+		$html  = "<h2 id='responsable'>RESPONSABLE DEL TRACTAMENT DE DADES</h2>\n";
 		$html .= '<p>El titular de la web i responsable del tractament de dades és [pdrgpd-titular]';
 		$html .= ', amb ' . pdrgpd_tipo_documento( pdrgpd_conf_nif() ) . ' [pdrgpd-nif]';
 		$html .= ', per contactar pots emprar';
@@ -68,7 +91,7 @@ function pdrgpd_politica_privacidad_responsable() {
 		}
 		$html .= '.</p>';
 	} else {
-		$html  = "<h3 id='responsable'>RESPONSABLE DEL TRATAMIENTO DE DATOS</h3>\n";
+		$html  = "<h2 id='responsable'>RESPONSABLE DEL TRATAMIENTO DE DATOS</h2>\n";
 		$html .= '<p>El titular del sitio y responsable del tratamiento de datos es [pdrgpd-titular]';
 		$html .= ', con ' . pdrgpd_tipo_documento( pdrgpd_conf_nif() ) . ' [pdrgpd-nif]';
 		$html .= ', para contactar puedes utilizar';
@@ -98,10 +121,18 @@ function pdrgpd_politica_privacidad_responsable() {
 }
 
 add_shortcode( 'pdrgpd-politica-privacidad-finalidad', 'pdrgpd_politica_privacidad_finalidad' );
+/**
+ * Genera la sección de finalidad del tratamiento de datos.
+ *
+ * Describe los usos y finalidades para los que se recogen los datos personales,
+ * adaptados al idioma activo del sitio.
+ *
+ * @return string HTML procesado de la sección de finalidad.
+ */
 function pdrgpd_politica_privacidad_finalidad() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html  = "<h3 id='finalidad'>FINALITAT DEL TRACTAMENT DE DADES</h3>\n";
+		$html  = "<h2 id='finalidad'>FINALITAT DEL TRACTAMENT DE DADES</h2>\n";
 		$html .= '<p>En la nostra web, existeixen apartats específics on pots anotar les teves dades per rebre informació sobre actualitzacions de la nostra web i d’alguns programes que es distribueixen. Nosaltres t’assegurem que la informació que ens facilitis serà gestionada de manera confidencial.</p>';
 
 		if ( pdrgpd_conf_existencia_formulario_contacto() ) {
@@ -114,7 +145,7 @@ function pdrgpd_politica_privacidad_finalidad() {
 			$html .= '[pdrgpd-finalidad-suscripcion-boletin]';
 		}
 	} else {
-		$html  = "<h3 id='finalidad'>FINALIDAD DEL TRATAMIENTO DE DATOS</h3>\n";
+		$html  = "<h2 id='finalidad'>FINALIDAD DEL TRATAMIENTO DE DATOS</h2>\n";
 		$html .= '<p>En nuestros sitios web, existen unos apartados específicos donde puedes anotar tus datos para recibir información sobre actualizaciones de nuestra web y de algunos los programas que se distribuyen. Nosotros te aseguramos que la información que nos facilites será gestionada de forma totalmente confidencial.</p>';
 
 		if ( pdrgpd_conf_existencia_formulario_contacto() ) {
@@ -163,23 +194,40 @@ function pdrgpd_politica_privacidad_finalidad() {
 }
 
 add_shortcode( 'pdrgpd-politica-privacidad-legitimacion', 'pdrgpd_politica_privacidad_legitimacion' );
+/**
+ * Genera la sección de legitimación del tratamiento.
+ *
+ * Explica la base legal que permite el tratamiento de los datos personales,
+ * adaptada al idioma activo del sitio.
+ *
+ * @return string HTML procesado de la sección de legitimación.
+ */
 function pdrgpd_politica_privacidad_legitimacion() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html  = "<h3 id='legitimacion'>LEGITIMACIÓ DEL TRACTAMENT DE DADES</h3>\n";
+		$html  = "<h2 id='legitimacion'>LEGITIMACIÓ DEL TRACTAMENT DE DADES</h2>\n";
 		$html .= '<p>L\'ús de les teves dades s’efectua perquè ens dónes el teu consentiment per utilitzar les que ens proporciones en els formularis per un ús específic que s\'indica en cadascun d\'ells. Totes les teves dades només són necessàries per a usos concrets pels quals se\'t sol·liciten, si no ho fas, aquests serveis no són possibles.</p>';
 	} else {
-		$html  = "<h3 id='legitimacion'>LEGITIMACIÓN DEL TRATAMIENTO DE DATOS</h3>\n";
+		$html  = "<h2 id='legitimacion'>LEGITIMACIÓN DEL TRATAMIENTO DE DATOS</h2>\n";
 		$html .= '<p>El uso de tus datos se realiza porque nos das tu consentimiento para usar los que nos proporcionas en los formularios para un uso específico que se indica en cada uno de ellos. Tus datos solo son necesarios para los usos concretos por los que se te solicitan, si no nos los facilitas, esos servicios no son posibles.</p>';
 	}
 	return do_shortcode( $html );
 }
 
 add_shortcode( 'pdrgpd-politica-privacidad-transferencia', 'pdrgpd_politica_privacidad_transferencia' );
+/**
+ * Genera la sección de cesión o transferencia internacional de datos.
+ *
+ * Devuelve el contenido HTML relativo a la transferencia de datos a terceros,
+ * en función del tipo de formulario indicado (por ejemplo, comentarios o contacto).
+ * Incluye información sobre servicios externos como filtrado de spam si aplica.
+ *
+ * @return string HTML de la sección de transferencia de datos, o cadena vacía si no aplica.
+ */
 function pdrgpd_politica_privacidad_transferencia() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html  = "<h3 id='transferencia'>TRANSFERÈNCIES I CESSIONS DE DADES</h3>\n";
+		$html  = "<h2 id='transferencia'>TRANSFERÈNCIES I CESSIONS DE DADES</h2>\n";
 		$html .= '<p>Existeix un compromís ferm per part nostre que les dades que proporcionis a [pdrgpd-sitio], no seran venudes ni cedides a terceres persones sense el teu previ consentiment, per a cap concepte o circumstància, excepte consentiment exprés o obligació legal.</p>';
 		if ( pdrgpd_existe_akismet() ) {
 			$html .= '<p>Les dades incorporades en el formulari de comentaris, seràn tractades per Automattic Inc., amb domicili a EEUU amb la finalitat de filtrar el spam als comentaris. Pots consultar la <a href="https://automattic.com/privacy-notice/">política de privadesa d\'Automattic Inc.</a>.</p>';
@@ -188,7 +236,7 @@ function pdrgpd_politica_privacidad_transferencia() {
 			$html .= '<p>Les dades incorporades en el formulari de conacte, seràn tractades per Automattic Inc., amb domicili a EEUU amb la finalitat de filtrar el spam als missatges. Pots consultar la <a href="https://automattic.com/privacy-notice/">política de privadesa d\'Automattic Inc.</a>.</p>';
 		}
 	} else {
-		$html  = "<h3 id='transferencia'>TRANSFERENCIAS Y CESIONES DE DATOS</h3>\n";
+		$html  = "<h2 id='transferencia'>TRANSFERENCIAS Y CESIONES DE DATOS</h2>\n";
 		$html .= '<p>Existe un compromiso firme por nuestra parte de que los datos que proporcione a [pdrgpd-sitio], no serán vendidos ni cedidos a terceras personas sin el previo consentimiento del interesado bajo ningún concepto o circunstancia, salvo consentimiento expreso u obligación legal.</p>';
 		if ( pdrgpd_existe_akismet() ) {
 			$html .= '<p>Los datos incorporados en el formulario de comentarios, serán tratados por Automattic Inc., con domicilio en EEUU con la finalidad de filtrar el spam en los comentarios. Puede consultar la <a href="https://automattic.com/privacy-notice/">política de privacidad de Automattic Inc.</a>.</p>';
@@ -223,6 +271,15 @@ function pdrgpd_politica_privacidad_transferencia() {
 	return do_shortcode( $html );
 }
 
+/**
+ * Genera un texto breve sobre cesiones de datos para formularios.
+ *
+ * Devuelve información resumida sobre la cesión de datos a Automattic Inc.
+ * para el filtrado de spam, según el tipo de formulario indicado.
+ *
+ * @param string $formulario Tipo de formulario. Acepta 'comentar' o 'contacto'.
+ * @return string Texto breve sobre la cesión de datos, o una cadena vacía.
+ */
 function pdrgpd_politica_privacidad_transferencia_mini( $formulario ) {
 	if ( ( pdrgpd_existe_akismet() && 'comentar' === $formulario ) || ( pdrgpd_conf_akismet_formulario_contacto() && 'contacto' === $formulario ) ) {
 		$html = 'Automattic Inc., EEUU ' . __( 'to spam filtering', 'proteccion-datos-rgpd' ) . '.';
@@ -234,10 +291,18 @@ function pdrgpd_politica_privacidad_transferencia_mini( $formulario ) {
 }
 
 add_shortcode( 'pdrgpd-politica-privacidad-derechos', 'pdrgpd_politica_privacidad_derechos' );
+/**
+ * Genera la sección de derechos de los usuarios.
+ *
+ * Describe los derechos de acceso, rectificación, supresión y otros,
+ * adaptados al idioma activo del sitio.
+ *
+ * @return string HTML procesado de la sección de derechos.
+ */
 function pdrgpd_politica_privacidad_derechos() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html  = "<h3 id='derechos'>DRETS DELS INTERESSATS</h3>\n";
+		$html  = "<h2 id='derechos'>DRETS DELS INTERESSATS</h2>\n";
 		$html .= '<p>Tens dret a accedir a la informació que sobre la teva persona estigui emmagatzemada en les nostres bases de dades, rectificar-la en cas d’errada, suprimir-la, limitar-la oposar-te al seu tractament i retirar-ne el consentiment si aquest és el teu desig.';
 		if ( pdrgpd_conf_email() ) {
 			$html .= ' Per fer-ho només has d’escriure un e-mail a l’adreça de correu electrònic: [pdrgpd-email] don et contestarem qualsevol consulta, comentari, aclariment que ens facis al respecte.';
@@ -245,7 +310,7 @@ function pdrgpd_politica_privacidad_derechos() {
 		$html .= '</p>';
 		$html .= '<p>Per a més informació sobre temes relacionats, la web de referència de la Xarxa espanyola és l’<a href="https://www.agpd.es/">Agencia de Protección de Datos</a>, on tens dret a reclamar.</p>';
 	} else {
-		$html  = "<h3 id='derechos'>DERECHOS DE LOS INTERESADOS</h3>\n";
+		$html  = "<h2 id='derechos'>DERECHOS DE LOS INTERESADOS</h2>\n";
 		$html .= '<p>Tienes el derecho de acceder a la información que sobre tu persona está almacenada en nuestras bases de datos, rectificarla si existiera alguna errata, suprimirla, limitarla, oponerte a su tratamiento y retirar tu consentimiento si ese es tu deseo.';
 		if ( pdrgpd_conf_email() ) {
 			$html .= ' Para ello simplemente debes escribir un e-mail a la dirección de correo electrónico [pdrgpd-email] donde te atenderemos gustosamente cualquier consulta, comentario o aclaración requerida al respecto.';
@@ -257,6 +322,15 @@ function pdrgpd_politica_privacidad_derechos() {
 }
 
 add_shortcode( 'pdrgpd-finalidad-formulario-contacto', 'pdrgpd_finalidad_formulario_contacto' );
+/**
+ * Genera el texto de finalidad del formulario de contacto.
+ *
+ * Devuelve una descripción breve o detallada de la finalidad del
+ * formulario de contacto, según la configuración disponible.
+ *
+ * @return string|null HTML de la finalidad del formulario de contacto,
+ *                     o null si no hay contenido configurado.
+ */
 function pdrgpd_finalidad_formulario_contacto() {
 	if ( pdrgpd_conf_finalidad_formulario_contacto() || pdrgpd_conf_finalidad_formulario_contacto_mini() ) {
 		$html = '<p>' . __( 'Contact form', 'proteccion-datos-rgpd' ) . ': ';
@@ -270,23 +344,52 @@ function pdrgpd_finalidad_formulario_contacto() {
 	}
 }
 
+/**
+ * Obtiene si existe formulario de contacto en el sitio.
+ *
+ * @return mixed Valor de la opción de existencia del formulario de contacto.
+ */
 function pdrgpd_conf_existencia_formulario_contacto() {
 	return get_option( 'pdrgpd_existencia_formulario_contacto' );
 }
 
+/**
+ * Obtiene el texto breve de finalidad del formulario de contacto.
+ *
+ * @return string Texto breve de finalidad del formulario de contacto.
+ */
 function pdrgpd_conf_finalidad_formulario_contacto_mini() {
 	return get_option( 'pdrgpd_finalidad_formulario_contacto_mini', __( 'Keep in contact with you or other required actions.', 'proteccion-datos-rgpd' ) );
 }
 
+/**
+ * Obtiene el texto completo de finalidad del formulario de contacto.
+ *
+ * @return mixed Valor de la opción de finalidad del formulario de contacto.
+ */
 function pdrgpd_conf_finalidad_formulario_contacto() {
 	return get_option( 'pdrgpd_finalidad_formulario_contacto' );
 }
 
+/**
+ * Obtiene si el formulario de contacto usa Akismet.
+ *
+ * @return mixed Valor de la opción de uso de Akismet en el formulario de contacto.
+ */
 function pdrgpd_conf_akismet_formulario_contacto() {
 	return get_option( 'pdrgpd_akismet_formulario_contacto' );
 }
 
 add_shortcode( 'pdrgpd-finalidad-suscripcion-boletin', 'pdrgpd_finalidad_suscripcion_boletin' );
+/**
+ * Genera el texto de finalidad de la suscripción al boletín.
+ *
+ * Devuelve una descripción breve o detallada de la finalidad de la
+ * suscripción al boletín, según la configuración disponible.
+ *
+ * @return string|null HTML de la finalidad de la suscripción al boletín,
+ *                     o null si no hay contenido configurado.
+ */
 function pdrgpd_finalidad_suscripcion_boletin() {
 	if ( pdrgpd_conf_finalidad_suscripcion_boletin() || pdrgpd_conf_finalidad_suscripcion_boletin_mini() ) {
 		$html = '<p>' . __( 'Newsletter suscription', 'proteccion-datos-rgpd' ) . ': ';
@@ -300,19 +403,43 @@ function pdrgpd_finalidad_suscripcion_boletin() {
 	}
 }
 
+/**
+ * Obtiene si existe suscripción al boletín en el sitio.
+ *
+ * @return mixed Valor de la opción de existencia de suscripción al boletín.
+ */
 function pdrgpd_conf_existencia_boletin() {
 	return get_option( 'pdrgpd_existencia_boletin' );
 }
 
+/**
+ * Obtiene el texto breve de finalidad de la suscripción al boletín.
+ *
+ * @return mixed Valor de la opción de finalidad breve de la suscripción al boletín.
+ */
 function pdrgpd_conf_finalidad_suscripcion_boletin_mini() {
 	return get_option( 'pdrgpd_finalidad_suscripcion_boletin_mini', __( 'Sending newsletters to your e-mail address.', 'proteccion-datos-rgpd' ) );
 }
 
+/**
+ * Obtiene el texto completo de finalidad de la suscripción al boletín.
+ *
+ * @return mixed Valor de la opción de finalidad de la suscripción al boletín.
+ */
 function pdrgpd_conf_finalidad_suscripcion_boletin() {
 	return get_option( 'pdrgpd_finalidad_suscripcion_boletin' );
 }
 
 add_shortcode( 'pdrgpd-finalidad-formulario-comentar', 'pdrgpd_finalidad_formulario_comentar' );
+/**
+ * Genera el texto de finalidad del formulario de comentarios.
+ *
+ * Devuelve una descripción breve o detallada de la finalidad del
+ * formulario de comentarios, incluyendo el filtrado de spam si aplica.
+ *
+ * @return string|null HTML de la finalidad del formulario de comentarios,
+ *                     o null si no hay contenido configurado.
+ */
 function pdrgpd_finalidad_formulario_comentar() {
 	if ( pdrgpd_conf_finalidad_formulario_comentar() || pdrgpd_conf_finalidad_formulario_comentar_mini() ) {
 		$html = '<p>' . __( 'Comment form', 'proteccion-datos-rgpd' ) . ': ';
@@ -332,28 +459,48 @@ function pdrgpd_finalidad_formulario_comentar() {
 	}
 }
 
+/**
+ * Obtiene si existe formulario de comentarios en el sitio.
+ *
+ * @return mixed Valor de la opción de existencia del formulario de comentarios.
+ */
 function pdrgpd_conf_existencia_formulario_comentar() {
 	return get_option( 'pdrgpd_existencia_formulario_comentar' );
 }
 
+/**
+ * Obtiene el texto breve de finalidad del formulario de comentarios.
+ *
+ * @return string Texto breve de finalidad del formulario de comentarios.
+ */
 function pdrgpd_conf_finalidad_formulario_comentar_mini() {
 	return get_option( 'pdrgpd_finalidad_formulario_comentar_mini', __( 'Manage and moderate your comments.', 'proteccion-datos-rgpd' ) );
 }
 
+/**
+ * Obtiene el texto completo de finalidad del formulario de comentarios.
+ *
+ * @return mixed Valor de la opción de finalidad del formulario de comentarios.
+ */
 function pdrgpd_conf_finalidad_formulario_comentar() {
 	return get_option( 'pdrgpd_finalidad_formulario_comentar' );
 }
 
+/**
+ * Obtiene la URL de la política de privacidad de Jetpack.
+ *
+ * @return string URL de la política de privacidad de Jetpack, traducida si procede.
+ */
 function pdrgpd_url_privacidad_jetpack() {
 	return pdrgpd_url_traducida( 'https://automattic.com/es/privacy/', 'en' );
 }
 
-/** Traduce una URL desde el idioma de origen si lo requiere, al estilo de:
- *  https://translate.google.com/translate?hl=en&sl=es&tl=en&u=https%3A%2F%2Fautomattic.com%2Fautomattic-and-the-general-data-protection-regulation-gdpr%2F
+/**
+ * Traduce una URL desde el idioma de origen si es necesario.
  *
  * @param string $url_original URL que puede requerir traducción.
  * @param string $idioma_origen Idioma de la URL original.
- * @return string URL, traducida si procede.
+ * @return string URL traducida si procede, o la original.
  */
 function pdrgpd_url_traducida( $url_original, $idioma_origen ) {
 	$locale = get_locale();

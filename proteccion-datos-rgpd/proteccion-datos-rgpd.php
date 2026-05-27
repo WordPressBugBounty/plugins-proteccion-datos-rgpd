@@ -3,7 +3,7 @@
  * Plugin Name: Protección de datos - RGPD
  * Plugin URI:  https://taller.abcdatos.net/plugin-rgpd-wordpress/
  * Description: Arrange your site to GDPR (General Data Protection Regulation) and LSSICE as well as other required tasks based on required configurations ettings.
- * Version:     0.70
+ * Version:     0.71
  * Author:      ABCdatos
  * Author URI:  https://taller.abcdatos.net/
  * License:     GPLv2
@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || die( 'No se permite el acceso.' );
 // i18n.
 /** Requerido o se obtiene error Plugin is not compatible with language packs: Missing load_plugin_textdomain(). en el canal de Slack #meta-language-packs.
  *
- * O usamos este hook o el requisito mínimo es WP 4.6.
+ * O usamos este hook o el requisito mínimo es WP 4.7.
  */
 function pdrgpd_load_plugin_textdomain() {
 	load_plugin_textdomain( 'proteccion-datos-rgpd', false, basename( __DIR__ ) . '/languages' );
@@ -74,7 +74,7 @@ function pdrgpd_plugin_action_links( $links, $file ) {
 	}
 	if ( $file === $this_plugin ) {
 		// The "page" query string value must be equal to the slug of the Settings admin page.
-		$settings_link = '<a href="' . admin_url( 'admin.php?page=proteccion-datos-rgpd' ) . '">' . __( 'Settings' ) . '</a>';
+		$settings_link = '<a href="' . admin_url( 'admin.php?page=proteccion-datos-rgpd' ) . '">' . __( 'Settings', 'proteccion-datos-rgpd' ) . '</a>';
 		array_unshift( $links, $settings_link );
 	}
 	return $links;
@@ -115,7 +115,7 @@ function pdrgpd_tipo_documento( $codigo ) {
  *
  * @return string El nombre del tema padre si el tema actual es un child theme, o el nombre del tema actual si no es un child theme.
  */
-function tema_padre() {
+function pdrgpd_tema_padre() {
 	$tema_actual = wp_get_theme();
 
 	if ( $tema_actual->parent() ) {

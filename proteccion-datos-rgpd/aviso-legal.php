@@ -43,7 +43,7 @@ add_shortcode( 'pdrgpd-aviso-legal', 'pdrgpd_aviso_legal' );
 function pdrgpd_aviso_legal_identificacion_titular() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html  = "<h3>DADES IDENTIFICATIVES DEL TITULAR DEL WEB</h3>\n";
+		$html  = "<h2>DADES IDENTIFICATIVES DEL TITULAR DEL WEB</h2>\n";
 		$html .= '<p>En compliment  del deure d\'informació estipulat en l\'article 10 de la Llei 34/2002 d\' 11 de juliol dels Serveis de la Societat de la Informació i del Comerç Electrònic, ';
 		$html .= '<strong><em>[pdrgpd-titular]</em></strong>';
 		$html .= ', amb ' . pdrgpd_tipo_documento( pdrgpd_conf_nif() ) . ' [pdrgpd-nif]';
@@ -71,7 +71,7 @@ function pdrgpd_aviso_legal_identificacion_titular() {
 		$html .= pdrgpd_conf_dominio();
 		$html .= '</i></strong>, assumeixen i es comprometen a respectar.</p>';
 	} else {
-		$html  = "<h3>DATOS IDENTIFICATIVOS DEL TITULAR DEL SITIO WEB</h3>\n";
+		$html  = "<h2>DATOS IDENTIFICATIVOS DEL TITULAR DEL SITIO WEB</h2>\n";
 		$html .= '<p>En cumplimiento del deber de información estipulado en el artículo 10 de la Ley 34/2002 de 11 de julio de Servicios de la Sociedad de la Información y de Comercio Electrónico, ';
 		$html .= '<strong><em>[pdrgpd-titular]</em></strong>';
 		$html .= ', con ' . pdrgpd_tipo_documento( pdrgpd_conf_nif() ) . ' [pdrgpd-nif]';
@@ -105,12 +105,15 @@ add_shortcode( 'pdrgpd-aviso-legal-identificacion-titular', 'pdrgpd_aviso_legal_
 /**
  * Genera la sección de condiciones de uso del sitio web.
  *
+ * Devuelve el contenido HTML de las condiciones de uso,
+ * adaptado al idioma activo del sitio (es/ca).
+ *
  * @return string HTML con las condiciones de uso.
  */
 function pdrgpd_aviso_legal_condiciones() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html = '<h3>CONDICIONS D\'ÚS</h3>
+		$html = '<h2>CONDICIONS D\'ÚS</h2>
 <p>La utilització de <strong>[pdrgpd-dominio]</strong> atorga la condició d\'<strong>Usuari</strong> de <strong>[pdrgpd-dominio]</strong>, sigui persona física o jurídica i obligatòriament implica l\'acceptació completa, plena i sense reserves de totes i cadascuna de les clàusules i condicions generals incloses en l\'Avís Legal. Si l\'<strong>Usuari</strong> no estigués conforme amb elles, s\'abstindrà d\'utilitzar <strong>[pdrgpd-dominio]</strong>. Aquest Avís Legal està subjecte a canvis i actualitzacions pel que la versió publicada per <strong>[pdrgpd-sitio]</strong> pot ser diferent en cada moment en què l\'<strong>Usuari</strong> accedeixi al Portal. Per tant, l\'<strong>Usuari</strong> ha de llegir l\'Avís Legal en totes i cadascuna de les ocasions que accedeixi a <strong>[pdrgpd-dominio]</strong>.</p>
 
 <p>A través de <strong>[pdrgpd-dominio]</strong>, <strong>[pdrgpd-sitio]</strong> facilita a l\'<strong>Usuari</strong> l\'accés i utilització de diversos continguts publicats per mitjà d\'Internet per <strong>[pdrgpd-sitio]</strong> o per tercers autoritzats.</p>
@@ -124,7 +127,7 @@ function pdrgpd_aviso_legal_condiciones() {
 </ul>
 <p>L\'<strong>Usuari</strong> s\'abstindrà d\'obtenir i d\'intentar accedir als continguts utilitzant mitjans o procediments diferents dels que, segons els casos, s\'hagin posat a la seva disposició per aquesta finalitat, o s\'hagin indicat per aquest fi en les pàgines web on es trobin els continguts, o en general, els que s\'emprin habitualment a Internet per aquest efecte sempre que no provoquin cap risc de dany o inutilització de la web <strong>[pdrgpd-dominio]</strong>, o dels continguts.</p>';
 	} else {
-		$html = '<h3>CONDICIONES DE USO</h3>
+		$html = '<h2>CONDICIONES DE USO</h2>
 <p>La utilización de <strong>[pdrgpd-dominio]</strong> otorga la condición de <strong>Usuario</strong> de <strong>[pdrgpd-dominio]</strong>, bien sea persona física o jurídica, y obligatoriamente implica la aceptación completa, plena y sin reservas de todas y cada una de las cláusulas y condiciones generales incluidas en el Aviso Legal. Si el <strong>Usuario</strong> no estuviera conforme con las cláusulas y condiciones de uso de este Aviso Legal, se abstendrá de utilizar <strong>[pdrgpd-dominio]</strong>. Este Aviso Legal está sujeto a cambios y actualizaciones, por lo que la versión publicada por <strong>[pdrgpd-sitio]</strong> puede ser diferente en cada momento en que el <strong>Usuario</strong> acceda al Portal. Por tanto, el <strong>Usuario</strong> debe leer el Aviso Legal en todas y cada una de las ocasiones en que acceda a <strong>[pdrgpd-dominio]</strong>.</p>
 
 <p>A través de <strong>[pdrgpd-dominio]</strong>, <strong>[pdrgpd-sitio]</strong> facilita al <strong>Usuario</strong> el acceso y la utilización de diversos contenidos publicados por medio de Internet por <strong>[pdrgpd-sitio]</strong> o por terceros autorizados.</p>
@@ -143,17 +146,20 @@ function pdrgpd_aviso_legal_condiciones() {
 add_shortcode( 'pdrgpd-aviso-legal-condiciones', 'pdrgpd_aviso_legal_condiciones' );
 
 /**
- * Genera la sección sobre propiedad intelectual del contenido.
+ * Genera la sección de propiedad intelectual e industrial.
  *
- * @return string HTML sobre derechos de propiedad intelectual.
+ * Devuelve el contenido HTML relativo a los derechos de propiedad
+ * intelectual e industrial del sitio web.
+ *
+ * @return string HTML con la información de propiedad intelectual.
  */
 function pdrgpd_aviso_legal_propiedad_intelectual() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html = '<h3>PROPIETAT INTEL·LECTUAL</h3>
+		$html = '<h2>PROPIETAT INTEL·LECTUAL</h2>
 <p>Totes les marques, noms comercials o signes distintius de qualsevol classe que apareixen a <strong>[pdrgpd-dominio]</strong> són propietat de <strong>[pdrgpd-sitio]</strong> o si no pot ser, dels seus respectius propietaris, sense que pugui entendre’s en cap  cas que l’ús o accés al Portal i/o als continguts  doni a l’<strong>Usuari</strong> cap dret sobre les esmentades marques, noms comercials i/o signes distintius i sense que es puguin entendre cedits a l\'<strong>Usuari</strong>, com tampoc cap dret d’explotació que existeixin o puguin existir sobre aquests continguts. De la mateixa manera els continguts són propietat intel·lectual de <strong>[pdrgpd-sitio]</strong>, o de tercers en el seu cas, per tant, els drets de Propietat Intel·lectual són de titularitat de <strong>[pdrgpd-sitio]</strong> o de tercers a qui se’ls hagi autoritzat el seu ús, a qui correspon l’exercici exclusiu dels drets d’explotació dels mateixos en qualsevol manera, i en especial, els drets de reproducció, distribució, comunicació pública i transformació. L’ús no autoritzat de la informació continguda en aquesta web, així com la lesió dels drets de la Propietat Intel·lectual o Industrial de <strong>[pdrgpd-sitio]</strong> o de tercers inclosos en <strong>[pdrgpd-dominio]</strong> que hagin cedit continguts donarà lloc a les responsabilitats legalment establertes.</p>';
 	} else {
-		$html = '<h3>PROPIEDAD INTELECTUAL</h3>
+		$html = '<h2>PROPIEDAD INTELECTUAL</h2>
 <p>Todas las marcas, nombres comerciales o signos distintivos de cualquier clase que aparecen en <strong>[pdrgpd-dominio]</strong> son propiedad de <strong>[pdrgpd-sitio]</strong> o, en su caso, de sus respectivos propietarios, sin que pueda entenderse que el uso o acceso al Portal o a los contenidos atribuya al <strong>Usuario</strong> derecho alguno sobre las citadas marcas, nombres comerciales o signos distintivos y sin que puedan entenderse cedidos al <strong>Usuario</strong> ninguno de los derechos de explotación que existen o puedan existir sobre dichos contenidos. De igual modo, los contenidos son propiedad intelectual de <strong>[pdrgpd-sitio]</strong> o de terceros en su caso, por tanto, los derechos de propiedad intelectual son titularidad de <strong>[pdrgpd-sitio]</strong> o de terceros que han autorizado su uso, a quienes corresponde el ejercicio exclusivo de los derechos de explotación de los mismos en cualquier forma y, en especial, los derechos de reproducción, distribución, comunicación pública y transformación. La utilización no autorizada de la información contenida en este sitio web, así como la lesión de los derechos de propiedad intelectual o industrial de <strong>[pdrgpd-sitio]</strong> o de terceros incluidos en <strong>[pdrgpd-dominio]</strong> que hayan cedido contenidos, dará lugar a las responsabilidades legalmente establecidas.</p>';
 	}
 	return do_shortcode( $html );
@@ -161,14 +167,17 @@ function pdrgpd_aviso_legal_propiedad_intelectual() {
 add_shortcode( 'pdrgpd-aviso-legal-propiedad-intelectual', 'pdrgpd_aviso_legal_propiedad_intelectual' );
 
 /**
- * Genera la sección sobre disponibilidad del sitio web.
+ * Genera la sección de disponibilidad del sitio web.
  *
- * @return string HTML sobre garantías de disponibilidad.
+ * Devuelve el contenido HTML sobre la disponibilidad
+ * y funcionamiento del sitio web.
+ *
+ * @return string HTML con la información de disponibilidad.
  */
 function pdrgpd_aviso_legal_disponibilidad() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html = '<h3>DISPONIBILITAT DE ' . strtoupper( do_shortcode( '[pdrgpd-dominio]' ) ) . '</h3>
+		$html = '<h2>DISPONIBILITAT DE ' . strtoupper( do_shortcode( '[pdrgpd-dominio]' ) ) . '</h2>
 <p><strong>[pdrgpd-sitio]</strong> no garanteix la inexistència d\'interrupcions o errades en l’accés a <strong>[pdrgpd-dominio]</strong>, als seus continguts, ni que aquests es trobin actualitzats, encara que desenvoluparà esforços, per intentar evitar-los,  arranjar-los o actualitzar-los. Per tant, <strong>[pdrgpd-sitio]</strong> no es responsabilitza dels danys o perjudicis de qualsevol classe produïts en l\'<strong>Usuari</strong> provocats per errades o desconnexions en les xarxes de telecomunicacions que produeixen la suspensió, cancel·lació o interrupció del servei del portal durant la prestació del mateix o amb caràcter previ.</p>
 
 <p><strong>[pdrgpd-sitio]</strong> exclou, excepte les contemplades en la legislació vigent, qualsevol responsabilitat pels danys i perjudicis de tota naturalesa que esdevinguin de la falta de disponibilitat, continuïtat o qualitat del funcionament de <strong>[pdrgpd-dominio]</strong> i dels continguts, a l’incompliment de l’expectativa d’utilitat que l\'<strong>USUARI</strong> hagués pogut atribuir a <strong>[pdrgpd-dominio]</strong> i als continguts.</p>
@@ -181,7 +190,7 @@ function pdrgpd_aviso_legal_disponibilidad() {
 
 <p>La prestació del servei de <strong>[pdrgpd-dominio]</strong> i dels continguts té, en principi, una durada indefinida. Tanmateix, la prestació del servei de <strong>[pdrgpd-sitio]</strong>, o de qualsevol dels continguts en qualsevol moment. Quan sigui possible, <strong>[pdrgpd-sitio]</strong> advertirà prèviament l\'acabament o suspensió de <strong>[pdrgpd-dominio]</strong>.</p>';
 	} else {
-		$html = '<h3>DISPONIBILIDAD DE ' . strtoupper( do_shortcode( '[pdrgpd-dominio]' ) ) . '</h3>
+		$html = '<h2>DISPONIBILIDAD DE ' . strtoupper( do_shortcode( '[pdrgpd-dominio]' ) ) . '</h2>
 <p><strong>[pdrgpd-sitio]</strong> no garantiza la inexistencia de interrupciones o errores en el acceso a <strong>[pdrgpd-dominio]</strong> o a sus contenidos ni que estos se encuentren actualizados, aunque desarrollará sus mejores esfuerzos para, en su caso, evitarlos, subsanarlos o actualizarlos. Por consiguiente, <strong>[pdrgpd-sitio]</strong> no se responsabiliza de los daños o perjuicios de cualquier tipo producidos en el <strong>Usuario</strong> que traigan causa de fallos o desconexiones en las redes de telecomunicaciones que produzcan la suspensión, cancelación o interrupción del servicio del portal durante la prestación del servicio o con carácter previo.</p>
 
 <p><strong>[pdrgpd-sitio]</strong> excluye, con las excepciones contempladas en la legislación vigente, cualquier responsabilidad por los daños y perjuicios de toda naturaleza que puedan deberse a la falta de disponibilidad, continuidad o calidad del funcionamiento de <strong>[pdrgpd-dominio]</strong> y de los contenidos, por el incumplimiento de la expectativa de utilidad que el <strong>Usuario</strong> hubiera podido atribuir a <strong>[pdrgpd-dominio]</strong> y a los contenidos.</p>
@@ -199,17 +208,20 @@ function pdrgpd_aviso_legal_disponibilidad() {
 add_shortcode( 'pdrgpd-aviso-legal-disponibilidad', 'pdrgpd_aviso_legal_disponibilidad' );
 
 /**
- * Genera la sección sobre calidad del contenido.
+ * Genera la sección de calidad del servicio.
  *
- * @return string HTML sobre garantías de calidad.
+ * Devuelve el contenido HTML relativo a la calidad
+ * de los contenidos y servicios ofrecidos.
+ *
+ * @return string HTML con la información de calidad.
  */
 function pdrgpd_aviso_legal_calidad() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html = '<h3>QUALITAT DE ' . strtoupper( do_shortcode( '[pdrgpd-dominio]' ) ) . '</h3>
+		$html = '<h2>QUALITAT DE ' . strtoupper( do_shortcode( '[pdrgpd-dominio]' ) ) . '</h2>
 <p>Donat l’entorn dinàmic i canviant de la informació i dels serveis que se subministren a través de <strong>[pdrgpd-dominio]</strong>, <strong>[pdrgpd-sitio]</strong> posa èmfasi, però no garanteix la completa veracitat, exactitud, fiabilitat, utilitat i/o actualitat dels continguts. La informació de les pàgines d’aquest Portal només té caràcter informatiu, consultiu, divulgatiu i publicitari. En cap cas, ofereix o té caràcter de compromís vinculant o contractual.</p>';
 	} else {
-		$html = '<h3>CALIDAD DE ' . strtoupper( do_shortcode( '[pdrgpd-dominio]' ) ) . '</h3>
+		$html = '<h2>CALIDAD DE ' . strtoupper( do_shortcode( '[pdrgpd-dominio]' ) ) . '</h2>
 <p>Dado el entorno dinámico y cambiante de la información y servicios que se suministran por medio de <strong>[pdrgpd-dominio]</strong>, <strong>[pdrgpd-sitio]</strong> realiza su mejor esfuerzo, pero no garantiza la completa veracidad, exactitud, fiabilidad, utilidad o actualidad de los contenidos. La información contenida en las páginas que componen este portal solo tiene carácter informativo, consultivo, divulgativo y publicitario. En ningún caso ofrece ni tiene carácter de compromiso vinculante o contractual.</p>';
 	}
 	return do_shortcode( $html );
@@ -219,15 +231,18 @@ add_shortcode( 'pdrgpd-aviso-legal-calidad', 'pdrgpd_aviso_legal_calidad' );
 /**
  * Genera la sección de limitación de responsabilidad.
  *
- * @return string HTML sobre exclusiones de responsabilidad.
+ * Devuelve el contenido HTML que describe las limitaciones
+ * de responsabilidad del titular del sitio web.
+ *
+ * @return string HTML con la limitación de responsabilidad.
  */
 function pdrgpd_aviso_legal_limitacion_responsabilidad() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html = '<h3>LIMITACIÓ DE RESPONSABILITAT</h3>
+		$html = '<h2>LIMITACIÓ DE RESPONSABILITAT</h2>
 <p><strong>[pdrgpd-sitio]</strong> exclou de tota responsabilitat per les decisions que l\'<strong>Usuari</strong> pugui prendre basant-se en aquesta informació, així com per les possibles errades tipogràfiques que puguin tenir els documents i elements gràfics de <strong>[pdrgpd-dominio]</strong>. La informació està sotmesa a possibles canvis periòdics sense previ avís per ampliació, millora, correcció o actualització dels continguts.</p>';
 	} else {
-		$html = '<h3>LIMITACIÓN DE RESPONSABILIDAD</h3>
+		$html = '<h2>LIMITACIÓN DE RESPONSABILIDAD</h2>
 <p><strong>[pdrgpd-sitio]</strong> excluye toda responsabilidad por las decisiones que el <strong>Usuario</strong> pueda tomar basadas en esta información, así como por los posibles errores tipográficos que puedan contener los documentos y elementos gráficos de <strong>[pdrgpd-dominio]</strong>. La información está sometida a posibles cambios periódicos sin previo aviso por ampliación, mejora, corrección o actualización de los contenidos.</p>';
 	}
 	return do_shortcode( $html );
@@ -235,17 +250,20 @@ function pdrgpd_aviso_legal_limitacion_responsabilidad() {
 add_shortcode( 'pdrgpd-aviso-legal-limitacion-responsabilidad', 'pdrgpd_aviso_legal_limitacion_responsabilidad' );
 
 /**
- * Genera la sección sobre notificaciones legales.
+ * Genera la sección de notificaciones.
  *
- * @return string HTML sobre eficacia de notificaciones.
+ * Devuelve el contenido HTML relativo a las comunicaciones
+ * y notificaciones entre el usuario y el titular del sitio.
+ *
+ * @return string HTML con la información de notificaciones.
  */
 function pdrgpd_aviso_legal_notificaciones() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html = '<h3>NOTIFICACIONS</h3>
+		$html = '<h2>NOTIFICACIONS</h2>
 <p>Totes les notificacions i comunicacions de <strong>[pdrgpd-sitio]</strong> a l\'<strong>Usuari</strong> efectuades per qualsevol mitjà es consideraran eficaces a tots els efectes.</p>';
 	} else {
-		$html = '<h3>NOTIFICACIONES</h3>
+		$html = '<h2>NOTIFICACIONES</h2>
 <p>Todas las notificaciones y comunicaciones de <strong>[pdrgpd-sitio]</strong> al <strong>Usuario</strong> realizadas por cualquier medio se considerarán eficaces a todos los efectos.</p>';
 	}
 	return do_shortcode( $html );
@@ -253,8 +271,10 @@ function pdrgpd_aviso_legal_notificaciones() {
 add_shortcode( 'pdrgpd-aviso-legal-notificaciones', 'pdrgpd_aviso_legal_notificaciones' );
 
 /**
- * Genera la sección de jurisdicción aplicable.
- * Solo se muestra si está definida una provincia.
+ * Genera la sección de jurisdicción.
+ *
+ * Devuelve el contenido HTML que establece la jurisdicción
+ * aplicable en caso de conflicto.
  *
  * @return string|null HTML sobre jurisdicción o null si no aplica.
  */
@@ -263,10 +283,10 @@ function pdrgpd_aviso_legal_jurisdiccion() {
 	if ( pdrgpd_conf_provincia() ) {
 		$locale = get_locale();
 		if ( 'ca' === $locale ) {
-			$html = '<h3>JURISDICCIÓ</h3>
+			$html = '<h2>JURISDICCIÓ</h2>
 <p>Per totes les qüestions que es plantegin sobre la interpretació, aplicació i compliment d’aquest Avís Legal, així com de les reclamacions que puguin derivar-se del seu ús, totes les parts que intervenen se sotmeten als Jutges i Tribunals de la província de [pdrgpd-provincia], renunciant de forma expressa a qualsevol altre fur o jurisdicció que pugui correspondre-li.</p>';
 		} else {
-			$html = '<h3>JURISDICCIÓN</h3>
+			$html = '<h2>JURISDICCIÓN</h2>
 <p>Para cuantas cuestiones se susciten sobre la interpretación, aplicación y cumplimiento de este Aviso Legal, así como de las reclamaciones que puedan derivarse de su uso, todas las partes intervinientes se someten a los Jueces y Tribunales de la provincia de [pdrgpd-provincia], renunciando de forma expresa a cualquier otro fuero que pudiera corresponderles.</p>';
 		}
 		return do_shortcode( $html );
@@ -275,17 +295,20 @@ function pdrgpd_aviso_legal_jurisdiccion() {
 add_shortcode( 'pdrgpd-aviso-legal-jurisdiccion', 'pdrgpd_aviso_legal_jurisdiccion' );
 
 /**
- * Genera la sección sobre legislación aplicable.
+ * Genera la sección de legislación aplicable.
  *
- * @return string HTML sobre normativa legal.
+ * Devuelve el contenido HTML que indica la normativa legal
+ * aplicable al sitio web.
+ *
+ * @return string HTML con la legislación aplicable.
  */
 function pdrgpd_aviso_legal_legislacion() {
 	$locale = get_locale();
 	if ( 'ca' === $locale ) {
-		$html = '<h3>LEGISLACIÓ APLICABLE</h3>
+		$html = '<h2>LEGISLACIÓ APLICABLE</h2>
 <p>El present Avís Legal es regeix per la normativa espanyola vigent. </p>';
 	} else {
-		$html = '<h3>LEGISLACIÓN APLICABLE</h3>
+		$html = '<h2>LEGISLACIÓN APLICABLE</h2>
 <p>El presente Aviso Legal se rige por la normativa española vigente.</p>';
 	}
 	return do_shortcode( $html );
@@ -716,7 +739,8 @@ add_shortcode( 'pdrgpd-sitio', 'pdrgpd_conf_sitio' );
  */
 function pdrgpd_conf_dominio() {
 	// Quitamos el protocolo al valor por defecto de la home.
-	return esc_html( get_option( 'pdrgpd_dominio', explode( '//', get_bloginfo( 'url' ) )[1] ) );
+	$partes_url = explode( '//', get_bloginfo( 'url' ) );
+	return esc_html( get_option( 'pdrgpd_dominio', $partes_url[1] ) );
 }
 add_shortcode( 'pdrgpd-dominio', 'pdrgpd_conf_dominio' );
 

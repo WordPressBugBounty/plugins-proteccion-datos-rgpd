@@ -13,30 +13,24 @@ defined( 'ABSPATH' ) || die( 'No se permite el acceso.' );
 // gtag (Google Global Site Tag).
 if ( '' !== pdrgpd_conf_google_analytics_id() ) {
 	add_action( 'wp_head', 'pdrgpd_inserta_gtag' );
+	/**
+	 * Inserta el snippet inline de Google Analytics en el head.
+	 *
+	 * @return void
+	 */
 	function pdrgpd_inserta_gtag() {
 		$pdrgpd_google_analytics_id = pdrgpd_conf_google_analytics_id();
 		// Debe ir en el head, antes de cualquier llamada a comandos gtag.
 		?>
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
+<?php // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript -- Este snippet de tercero debe salir inline en wp_head para mantener su orden y configuración. ?>
 <script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_attr( $pdrgpd_google_analytics_id ); ?>"></script>
+<?php // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript -- Este snippet de tercero debe salir inline en wp_head para mantener su orden y configuración. ?>
 <script>
 window.dataLayer = window.dataLayer || [];
 function gtag(){window.dataLayer.push(arguments);}
 gtag('js', new Date());
-		<?php
-		/*
-		// Si se usa el banner y no están aceptadas las cookies, las rechaza de entrada
-		if ( pdrgpd_conf_mostrar_banner_cookies() && !pdrgpd_cookie_estadisticas() ) {
-		?>
-		gtag('consent', 'default', {
-		'ad_storage': 'denied',
-		'analytics_storage': 'denied'
-		});
-		<?php
-		}
-		*/
-		?>
 gtag('config', '<?php echo esc_attr( $pdrgpd_google_analytics_id ); ?>');
 </script>
 
@@ -46,14 +40,20 @@ gtag('config', '<?php echo esc_attr( $pdrgpd_google_analytics_id ); ?>');
 
 
 // Facebook Pixel.
-if ( '' != pdrgpd_conf_facebook_pixel_id() ) {
+if ( '' !== pdrgpd_conf_facebook_pixel_id() ) {
 	add_action( 'wp_head', 'pdrgpd_inserta_fb_pixel' );
+	/**
+	 * Inserta el snippet inline de Facebook Pixel en el head.
+	 *
+	 * @return void
+	 */
 	function pdrgpd_inserta_fb_pixel() {
 		$pdrgpd_facebook_pixel_id = pdrgpd_conf_facebook_pixel_id();
 		// Debe ir en el head.
 		?>
 
 <!-- Facebook Pixel Code -->
+<?php // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript -- Este snippet de tercero debe salir inline en wp_head para mantener su orden y configuración. ?>
 <script>
 	!function(f,b,e,v,n,t,s)
 	{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -63,16 +63,6 @@ if ( '' != pdrgpd_conf_facebook_pixel_id() ) {
 	t.src=v;s=b.getElementsByTagName(e)[0];
 	s.parentNode.insertBefore(t,s)}(window, document,'script',
 	'https://connect.facebook.net/en_US/fbevents.js');
-		<?php
-		/*
-		// Si se usa el banner y no están aceptadas las cookies, las rechaza de entrada
-		if ( pdrgpd_conf_mostrar_banner_cookies() && !pdrgpd_cookie_estadisticas() ) {
-		?>
-		fbq('consent', 'revoke');
-		<?php
-		}
-		*/
-		?>
 	fbq('init', '<?php echo esc_attr( $pdrgpd_facebook_pixel_id ); ?>');
 	fbq('track', 'PageView');
 </script>
@@ -90,26 +80,37 @@ if ( '' != pdrgpd_conf_facebook_pixel_id() ) {
  * Valores cookies
  */
 
+/**
+ * Indica si se aceptaron las cookies de estadisticas.
+ *
+ * @return bool Verdadero si la cookie esta activa.
+ */
 function pdrgpd_cookie_estadisticas() {
-	if ( isset( $_COOKIE['pdrgpd_estadisticas'] ) ) {
-		if ( true == $_COOKIE['pdrgpd_estadisticas'] ) {
-			return true;
-		} else {
-			return false;
-		}
+	if ( ! isset( $_COOKIE['pdrgpd_estadisticas'] ) ) {
+		return false;
 	}
+
+	return '1' === $_COOKIE['pdrgpd_estadisticas'] || 'true' === $_COOKIE['pdrgpd_estadisticas'];
 }
 
 /*
  * Valores configurados
  */
 
-// Google Tracking code.
+/**
+ * Devuelve el identificador configurado de Google Analytics.
+ *
+ * @return string ID configurado o cadena vacia.
+ */
 function pdrgpd_conf_google_analytics_id() {
 	return esc_html( get_option( 'pdrgpd_google_analytics_id', '' ) );
 }
 
-// Facebook Pixel.
+/**
+ * Devuelve el identificador configurado de Facebook Pixel.
+ *
+ * @return string ID configurado o cadena vacia.
+ */
 function pdrgpd_conf_facebook_pixel_id() {
 	return esc_html( get_option( 'pdrgpd_facebook_pixel_id', '' ) );
 }

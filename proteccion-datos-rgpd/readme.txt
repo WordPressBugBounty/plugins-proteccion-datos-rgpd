@@ -1,9 +1,9 @@
 === Protección de datos - RGPD ===
 Contributors: ABCdatos
 Tags: privacidad,rgpd,proteccion,datos,legal
-Requires at least: 4.2
+Requires at least: 4.7
 Tested up to: 7.0
-Stable tag: 0.70
+Stable tag: 0.71
 Requires PHP: 5.3
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -12,9 +12,9 @@ En minutos cumplirás con la legislación vigente, RGPD LSSICE y LOPD, con los d
 
 == Description ==
 
-Desde el 25 de mayo de 2018, las páginas web de la Unión Europea han de seguir las directrices del [Reglamento General de Protección de Datos (RGPD)](https://www.boe.es/doue/2016/119/L00001-00088.pdf).
+Desde el 25 de mayo de 2018, los sitios web de la Unión Europea deben cumplir con lo dispuesto en el Reglamento (UE) 2016/679, conocido como Reglamento General de Protección de Datos (RGPD), así como con la normativa nacional aplicable, como la Ley Orgánica 3/2018 (LOPDGDD) y la Ley 34/2002 de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSICE).
 
-Con este plugin para WordPress te facilitamos la adaptación al mismo, con muy poco esfuerzo tendrás configurados un aviso legal para cumplir con la LSSICE, una política de privacidad acorde al RGPD -ampliación europea de la LOPD- así como otras prestaciones relacionadas con el deber de información y los formularios.
+Con este plugin para WordPress te facilitamos la adaptación a estas normativas. Con muy poco esfuerzo podrás disponer de un aviso legal conforme a la LSSICE, una política de privacidad adaptada al RGPD y a la LOPDGDD, así como funcionalidades adicionales relacionadas con el deber de información, el uso de cookies y la adecuación de formularios.
 
 El plugin genera el contenido de tus páginas de textos legales y te propociona etiquetas que puedes utilizar para adaptar tus formularios al RGPD sin que futuras actualizaciones o pequeñas correcciones requieran editar el contenido de las páginas generadas automáticamente.
 
@@ -90,10 +90,9 @@ Si tu tema resulta compatible -la función está recién desarrollada y podría 
 
 Si no funciona en tu tema, [avísanos](https://wordpress.org/support/plugin/proteccion-datos-rgpd) para que veamos si se puede adaptar en una próxima versión o incluirlo en una lista de no compatibles para advertirlo.
 
-= Prestaciones pendientes de implementar =
+= Funcionalidades no implementadas =
 
 * Indicación de las cookies utilizadas en la política de cookies que se introdujo en la v0.40.
-* Aviso de cookies.
 
 == Installation ==
 
@@ -104,9 +103,9 @@ Si no funciona en tu tema, [avísanos](https://wordpress.org/support/plugin/prot
 1. Si corresponde, marca la casilla que indica su existencia e inserta el código `[pdrgpd-aviso-formulario-contacto]` en tu formulario de contacto, además de una casilla de aceptación de tu política de privacidad que haya que marcar forzosamente. Consulta las [Preguntas frecuentes](https://taller.abcdatos.net/plugin-rgpd-wordpress/#faq) para más detalles.
 1. Procede del mismo modo con el formulario de suscripción si existe.
 1. Marca la casilla correspondiente si permites comentarios en tu sitio.
-1. Si utilizas el widget de Jetpack para permitir la suscripción a nuevas entradas, remplázalo por un widget HTML con la etiqueta `[pdrgpd_jetpack_suscripcion]` y marca la casilla Existe formulario de suscripción de Jetpack.
+1. Si utilizas el widget de Jetpack para permitir la suscripción a nuevas entradas, remplázalo por un widget HTML con la etiqueta `[pdrgpd_jetpack_suscripcion]` (o el nuevo nombre `[pdrgpd-jetpack-suscripcion]`) y marca la casilla Existe formulario de suscripción de Jetpack. Se recomienda usar el nuevo nombre con guión.
 1. Pulsa en Guardar los cambios.
-1- Crea los enlaces a los documentos legales a pie de página o permite que el plugin lo haga por ti (solo en temas compatibles).
+1. Crea los enlaces a los documentos legales a pie de página o permite que el plugin lo haga por ti (solo en temas compatibles).
 
 == Frequently Asked Questions ==
 
@@ -132,13 +131,18 @@ En el formulario afectado, inserta lo siguiente antes de la etiqueta del botón 
 `[acceptance Acepto-privacidad] Acepto la <a href="[pdrgpd-uri-privacidad]">política de privacidad</a>`
 `[pdrgpd-aviso-formulario-contacto]`
 
-No olvides incluir el campo en la pestaña Correo Electrónico para que llegue en el mail:
+Como alternativa, puedes envolver ambos elementos en una etiqueta label para facilitar una integración visual más compacta de la casilla de aceptación:
+
+`<label> [acceptance Acepto-privacidad] Acepto la <a href="[pdrgpd-uri-privacidad]">política de privacidad</a>`
+`[pdrgpd-aviso-formulario-contacto] </label>`
+
+No olvides incluir el campo en la pestaña Correo electrónico para que llegue en el mail:
 
 `Privacidad: [Acepto-privacidad]`
 
 Adáptalo al diseño del formulario si es oportuno.
 
-Para evitar que la casilla de aceptación y el texto queden en diferentes líneas, agrega el siguiente código en Apariencia > Personalización > CSS adicional:
+Si utilizas el ejemplo anterior sin label y quieres evitar que la casilla de aceptación y el texto queden en diferentes líneas, agrega el siguiente código en Apariencia > Personalización > CSS adicional:
 
 `span.Acepto-privacidad {
     display: inline;
@@ -175,6 +179,14 @@ El banner de cookies solo es obligatorio si las usas. En ese caso, además de mo
 3. Ejemplo de política de privacidad.
 
 == Changelog ==
+
+= 0.71 =
+*26 mayo 2026*
+* Subido el requisito mínimo a WordPress 4.7.
+* Añadida sanitización de opciones y mejorada la seguridad en la creación de páginas legales.
+* Corregidos diversos avisos de estilo y compatibilidad.
+* Añadido alias con guión para el shortcode de Jetpack (se recomienda actualizar).
+* Varias correcciones menores y mejoras de calidad interna.
 
 = 0.70 =
 *Apr 22 2026*

@@ -10,9 +10,9 @@
 
 defined( 'ABSPATH' ) || die( 'No se permite el acceso.' );
 
-define( 'AVISO_ROJO', '<span style="color:red;">&#9679;&nbsp;</span> ' );
-define( 'AVISO_AMARILLO', '<span style="color:orange;">&#9679;&nbsp;</span>' );
-define( 'AVISO_VERDE', '<span style="color:green;">&#10004;&nbsp;</span> ' );
+define( 'PDRGPD_AVISO_ROJO', '<span style="color:red;">&#9679;&nbsp;</span> ' );
+define( 'PDRGPD_AVISO_AMARILLO', '<span style="color:orange;">&#9679;&nbsp;</span>' );
+define( 'PDRGPD_AVISO_VERDE', '<span style="color:green;">&#10004;&nbsp;</span> ' );
 
 /*
  * ------------------------------------------------------------------------
@@ -66,7 +66,7 @@ function pdrgpd_admin() {
 	}
 	?>
 	<div class="wrap">
-		<h1><img src="<?php echo esc_url( plugin_dir_url( __FILE__ ) ); ?>images/proteccion-datos-rgpd-32x32.png" width=32 height=32 alt="Protección Datos - RGPD" /> <?php esc_html_e( 'Protección Datos - RGPD Settings', 'proteccion-datos-rgpd' ) . ' <small>v' . pdrgpd_get_version(); ?></small></h1>
+		<h1><img src="<?php echo esc_url( plugin_dir_url( __FILE__ ) ); ?>images/proteccion-datos-rgpd-32x32.png" width="32" height="32" alt="<?php esc_attr_e( 'Protección Datos - RGPD', 'proteccion-datos-rgpd' ); ?>" /> <?php esc_html_e( 'Protección Datos - RGPD Settings', 'proteccion-datos-rgpd' ); ?> <small>v<?php echo esc_html( pdrgpd_get_version() ); ?></small></h1>
 		<?php settings_errors(); ?>
 		<form method="POST" action="options.php">
 			<?php
@@ -98,13 +98,24 @@ function pdrgpd_settings_init() {
 
 	// Registrar todas las opciones.
 	foreach ( pdrgpd_lista_opciones() as $nombre_opcion ) {
-		register_setting( 'proteccion-datos-rgpd-ajustes', $nombre_opcion );
+		register_setting(
+			'proteccion-datos-rgpd-ajustes',
+			$nombre_opcion,
+			array(
+				'sanitize_callback' => pdrgpd_sanitizador_opcion( $nombre_opcion ),
+			)
+		);
 	}
 
 	// ¿Se ha marcado “crear páginas legales”?
 	if ( isset( $_POST['pdrgpd_crear_paginas_legales'] ) ) {
 
-		// 1. Verificar nonce.
+		// 1. Comprobar capacidad antes de procesar cualquier dato.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		// 2. Verificar nonce.
 		if ( ! isset( $_POST['_pdrgpd_nonce'] )
 			|| ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_pdrgpd_nonce'] ) ), 'pdrgpd_crear_legales' )
 		) {
@@ -118,15 +129,12 @@ function pdrgpd_settings_init() {
 			return;
 		}
 
-		// 2. Confirmar que el POST viene del grupo de opciones de la página (evita colisiones de nombres o posts extraños).
-		if ( empty( $_POST['option_page'] ) ||
-		'proteccion-datos-rgpd-ajustes' !== $_POST['option_page']
-		) {
-			return;
-		}
+		// 3. Confirmar que el POST viene del grupo de opciones de la página (evita colisiones de nombres o posts extraños).
+		$option_page = isset( $_POST['option_page'] )
+			? sanitize_text_field( wp_unslash( $_POST['option_page'] ) )
+			: '';
 
-		// 3. Seguir solo si el usuario puede.
-		if ( ! is_admin() || ! current_user_can( 'manage_options' ) ) {
+		if ( empty( $option_page ) || 'proteccion-datos-rgpd-ajustes' !== $option_page ) {
 			return;
 		}
 
@@ -562,6 +570,97 @@ function pdrgpd_settings_init() {
 	);
 }
 add_action( 'admin_init', 'pdrgpd_settings_init' );
+
+/**
+ * Devuelve el callback de sanitizacion correspondiente a una opcion.
+ *
+ * @param string $nombre_opcion Nombre de la opcion registrada.
+ * @return callable Callback de sanitizacion.
+ */
+function pdrgpd_sanitizador_opcion( $nombre_opcion ) {
+	$sanitizadores = array(
+		'pdrgpd_vies'                           => 'pdrgpd_sanitiza_checkbox',
+		'pdrgpd_email'                          => 'sanitize_email',
+		'pdrgpd_uri_aviso'                      => 'esc_url_raw',
+		'pdrgpd_uri_privacidad'                 => 'esc_url_raw',
+		'pdrgpd_uri_cookies'                    => 'esc_url_raw',
+		'pdrgpd_existencia_formulario_contacto' => 'pdrgpd_sanitiza_checkbox',
+		'pdrgpd_finalidad_formulario_contacto'  => 'sanitize_textarea_field',
+		'pdrgpd_akismet_formulario_contacto'    => 'pdrgpd_sanitiza_checkbox',
+		'pdrgpd_existencia_boletin'             => 'pdrgpd_sanitiza_checkbox',
+		'pdrgpd_finalidad_suscripcion_boletin'  => 'sanitize_textarea_field',
+		'pdrgpd_aplicar_formulario_comentar'    => 'pdrgpd_sanitiza_checkbox',
+		'pdrgpd_finalidad_formulario_comentar'  => 'sanitize_textarea_field',
+		'pdrgpd_existencia_suscripcion_jetpack' => 'pdrgpd_sanitiza_checkbox',
+		'pdrgpd_pie_enlace_legal'               => 'pdrgpd_sanitiza_checkbox',
+		'pdrgpd_pie_enlace_privacidad'          => 'pdrgpd_sanitiza_checkbox',
+		'pdrgpd_pie_enlace_cookies'             => 'pdrgpd_sanitiza_checkbox',
+		'pdrgpd_pie_copyright'                  => 'pdrgpd_sanitiza_anyo_pie',
+		'pdrgpd_pie_multilinea'                 => 'pdrgpd_sanitiza_checkbox',
+		'pdrgpd_formato_primera_capa'           => 'pdrgpd_sanitiza_formato_primera_capa',
+		'pdrgpd_google_analytics_id'            => 'pdrgpd_sanitiza_id_externo',
+		'pdrgpd_facebook_pixel_id'              => 'pdrgpd_sanitiza_id_externo',
+		'pdrgpd_mostrar_banner_cookies'         => 'pdrgpd_sanitiza_checkbox',
+	);
+
+	if ( isset( $sanitizadores[ $nombre_opcion ] ) ) {
+		return $sanitizadores[ $nombre_opcion ];
+	}
+
+	return 'sanitize_text_field';
+}
+
+/**
+ * Normaliza valores de checkbox a 1 o 0.
+ *
+ * @param mixed $valor Valor recibido desde Settings API.
+ * @return int 1 si esta marcado, 0 en caso contrario.
+ */
+function pdrgpd_sanitiza_checkbox( $valor ) {
+	return $valor ? 1 : 0;
+}
+
+/**
+ * Valida el formato de primera capa permitido.
+ *
+ * @param string $valor Valor recibido desde Settings API.
+ * @return string Formato valido.
+ */
+function pdrgpd_sanitiza_formato_primera_capa( $valor ) {
+	if ( in_array( $valor, array( 'tabla', 'parrafo' ), true ) ) {
+		return $valor;
+	}
+
+	return 'tabla';
+}
+
+/**
+ * Sanitiza identificadores externos como Analytics o Facebook Pixel.
+ *
+ * @param string $valor Identificador configurado.
+ * @return string Identificador seguro.
+ */
+function pdrgpd_sanitiza_id_externo( $valor ) {
+	$valor = sanitize_text_field( $valor );
+	$valor = preg_replace( '/[^A-Za-z0-9_-]/', '', $valor );
+
+	return $valor;
+}
+
+/**
+ * Sanitiza el anyo inicial del copyright del pie.
+ *
+ * @param string $valor Anyo configurado o cadena vacia.
+ * @return string Anyo numerico o cadena vacia.
+ */
+function pdrgpd_sanitiza_anyo_pie( $valor ) {
+	$valor = trim( $valor );
+	if ( '' === $valor ) {
+		return '';
+	}
+
+	return (string) absint( $valor );
+}
 
 /*
  * ------------------------------------------------------------------------
@@ -1091,7 +1190,7 @@ function pdrgpd_aplicar_formulario_comentar_callback() {
 	if ( pdrgpd_modulo_jetpack_comentarios_activo() ) {
 		echo '<p class="description" id="tagline-description">';
 		if ( get_option( 'pdrgpd_aplicar_formulario_comentar' ) ) {
-			echo wp_kses_post( AVISO_ROJO );
+			echo wp_kses_post( PDRGPD_AVISO_ROJO );
 		}
 		echo 'Esta funcionalidad es incompatible con la opción de identificación mediante redes sociales de Jetpack que se configura o desactiva en su caso en <a href="' . esc_url( admin_url( 'admin.php?page=jetpack#discussion' ) ) . '">Jetpack -> Ajustes -> Debate</a> -> Comentarios -> Permite a los lectores usar cuentas de WordPress.com, Twitter, Facebook o Google+ para comentar.</p>';
 	}
@@ -1214,7 +1313,7 @@ function pdrgpd_seccion_pie_callback() {
 	echo ' GeneratePress.<br />';
 	esc_html_e( 'Parent theme', 'proteccion-datos-rgpd' );
 	echo ': <b>';
-	esc_html( tema_padre() );
+	echo esc_html( pdrgpd_tema_padre() );
 	echo '</b>.<br />';
 }
 
@@ -1303,15 +1402,15 @@ function pdrgpd_advertencia_pagina_legal( $url, $shortcode ) {
 			// echo $slug . ': ' . get_the_title( $pagina ) . '</p>' ;
 			// La posición cero o cualquier otra.
 			if ( pdrgpd_existe_shortcode_o_derivado_en_pagina_sitio( $pagina, $shortcode ) ) {
-				echo wp_kses_post( AVISO_VERDE ) . 'La página <em>' . esc_url( pdrgpd_enlace_pagina_wp( $url ) ) . '</em> está manejada por el plugin';
+				echo wp_kses_post( PDRGPD_AVISO_VERDE ) . 'La página <em>' . esc_url( pdrgpd_enlace_pagina_wp( $url ) ) . '</em> está manejada por el plugin';
 			} else {
-				echo wp_kses_post( AVISO_AMARILLO ) . 'La página ' . esc_url( pdrgpd_enlace_pagina_wp( $url ) ) . ' no contiene la etiqueta <b>[' . esc_html( $shortcode ) . ']</b> ni sus derivadas, si quieres que el plugin maneje el texto, ponle esa etiqueta como único contenido.';
+				echo wp_kses_post( PDRGPD_AVISO_AMARILLO ) . 'La página ' . esc_url( pdrgpd_enlace_pagina_wp( $url ) ) . ' no contiene la etiqueta <b>[' . esc_html( $shortcode ) . ']</b> ni sus derivadas, si quieres que el plugin maneje el texto, ponle esa etiqueta como único contenido.';
 			}
 		} else {
-			echo wp_kses_post( AVISO_ROJO ) . 'La página ' . esc_url( pdrgpd_enlace_pagina_wp( $url ) ) . ' no existe, créala poniendo como único contenido <b>[' . esc_html( $shortcode ) . ']</b> y el plugin se ocupará de convertirlo en el contenido adecuado.';
+			echo wp_kses_post( PDRGPD_AVISO_ROJO ) . 'La página ' . esc_url( pdrgpd_enlace_pagina_wp( $url ) ) . ' no existe, créala poniendo como único contenido <b>[' . esc_html( $shortcode ) . ']</b> y el plugin se ocupará de convertirlo en el contenido adecuado.';
 		}
 	} else {
-		echo wp_kses_post( AVISO_AMARILLO ) . 'La página ' . wp_kses_post( pdrgpd_enlace_pagina_wp( $url ) ) . ' no está en esta instalación de WordPress ' . esc_url( get_bloginfo( 'wpurl' ) ) . ', este plugin no puede trabajar su contenido.';
+		echo wp_kses_post( PDRGPD_AVISO_AMARILLO ) . 'La página ' . wp_kses_post( pdrgpd_enlace_pagina_wp( $url ) ) . ' no está en esta instalación de WordPress ' . esc_url( get_bloginfo( 'wpurl' ) ) . ', este plugin no puede trabajar su contenido.';
 	}
 }
 
@@ -1401,6 +1500,7 @@ function pdrgpd_slug_pagina( $url ) {
 	$slug = '';
 	if ( pdrgpd_bajo_control_wp( $url ) ) {
 		$slug = str_replace( get_bloginfo( 'wpurl' ) . '/', '', $url );
+		$slug = sanitize_title( trim( $slug, '/' ) );
 	}
 	return $slug;
 }
@@ -1464,51 +1564,56 @@ function pdrgpd_crear_paginas_legales() {
 /**
  * Crea una página legal individual.
  *
+ * Sanitiza el slug y valida el tipo antes de insertar.
+ *
  * @since 1.0.0
  *
- * @param string $slug    Slug deseado.
- * @param string $tipo    Tipo: 'aviso-legal', 'privacidad' o 'cookies'.
+ * @param string $slug Slug deseado.
+ * @param string $tipo Tipo: 'aviso-legal', 'privacidad' o 'cookies'.
  * @return void
  */
 function pdrgpd_crear_pagina_legal( $slug, $tipo ) {
-	// La página aviso-legal/ ya existe, no se crea.Creada página privacidad2/.La página cookies/ ya existe, no se crea.pdrgpd_crear_paginas_legales
-	// Solo se crea si tiene slug previsto.
-	if ( $slug ) {
-		if ( pdrgpd_existe_pagina( $slug ) ) {
-			// Indicar que ya existe.
-			__return_null();
-		} else {
-			// Crear.
-			switch ( $tipo ) {
-				case 'aviso-legal':
-					$titulo    = __( 'Legal notice', 'proteccion-datos-rgpd' );
-					$contenido = pdrgpd_shortcode_gutenberg( 'pdrgpd-aviso-legal' );
-					break;
-				case 'privacidad':
-					$titulo    = __( 'Privacy policy', 'proteccion-datos-rgpd' );
-					$contenido = pdrgpd_shortcode_gutenberg( 'pdrgpd-politica-privacidad' );
-					break;
-				case 'cookies':
-					$titulo    = __( 'Cookies policy', 'proteccion-datos-rgpd' );
-					$contenido = pdrgpd_shortcode_gutenberg( 'pdrgpd-politica-cookies' );
-					break;
-			}
-			$nueva_pagina = array(
-				'post_type'      => 'page',
-				'post_name'      => $slug,
-				'post_title'     => $titulo,
-				'post_content'   => $contenido,
-				'post_status'    => 'publish',
-				'comment_status' => 'closed',
-			);
-			if ( wp_insert_post( $nueva_pagina, true ) ) {
-				$url = get_permalink( get_page_by_path( $slug ) );
-				// Translators: %s is an HTML link.
-				$message = sprintf( __( 'Page %s created.', 'proteccion-datos-rgpd' ), pdrgpd_enlace_pagina_wp( $url ) );
-				$type    = 'updated';
-				// Los dos primeros parámetros son ciencia ficción.
-				add_settings_error( 'pdrgpd_ajustes', 'pdrgpd_mensaje', $message, $type );
-			}
+	$slug = sanitize_title( $slug );
+	if ( ! $slug ) {
+		return;
+	}
+
+	if ( pdrgpd_existe_pagina( $slug ) ) {
+		// Indicar que ya existe.
+		__return_null();
+	} else {
+		// Crear.
+		switch ( $tipo ) {
+			case 'aviso-legal':
+				$titulo    = __( 'Legal notice', 'proteccion-datos-rgpd' );
+				$contenido = pdrgpd_shortcode_gutenberg( 'pdrgpd-aviso-legal' );
+				break;
+			case 'privacidad':
+				$titulo    = __( 'Privacy policy', 'proteccion-datos-rgpd' );
+				$contenido = pdrgpd_shortcode_gutenberg( 'pdrgpd-politica-privacidad' );
+				break;
+			case 'cookies':
+				$titulo    = __( 'Cookies policy', 'proteccion-datos-rgpd' );
+				$contenido = pdrgpd_shortcode_gutenberg( 'pdrgpd-politica-cookies' );
+				break;
+			default:
+				return;
+		}
+		$nueva_pagina = array(
+			'post_type'      => 'page',
+			'post_name'      => $slug,
+			'post_title'     => $titulo,
+			'post_content'   => $contenido,
+			'post_status'    => 'publish',
+			'comment_status' => 'closed',
+		);
+		if ( wp_insert_post( $nueva_pagina, true ) ) {
+			$url = get_permalink( get_page_by_path( $slug ) );
+			// Translators: %s is an HTML link.
+			$message = sprintf( __( 'Page %s created.', 'proteccion-datos-rgpd' ), pdrgpd_enlace_pagina_wp( $url ) );
+			$type    = 'updated';
+			// Los dos primeros parámetros son ciencia ficción.
+			add_settings_error( 'pdrgpd_ajustes', 'pdrgpd_mensaje', $message, $type );
 		}
 	}
 }
