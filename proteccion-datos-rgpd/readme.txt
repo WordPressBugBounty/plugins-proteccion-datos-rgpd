@@ -2,8 +2,8 @@
 Contributors: ABCdatos
 Tags: privacidad,rgpd,proteccion,datos,legal
 Requires at least: 4.7
-Tested up to: 7.0
-Stable tag: 0.71
+Tested up to: 7.1
+Stable tag: 0.72
 Requires PHP: 5.3
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -180,6 +180,11 @@ El banner de cookies solo es obligatorio si las usas. En ese caso, además de mo
 
 == Changelog ==
 
+= 0.72 =
+*05 oct 2026*
+* Verificada la compatibilidad con WordPress 7.1.
+* Removed the load_plugin_textdomain() call and the Domain Path header; translations are loaded automatically by wordpress.org.
+
 = 0.71 =
 *26 mayo 2026*
 * Subido el requisito mínimo a WordPress 4.7.
@@ -350,7 +355,7 @@ El banner de cookies solo es obligatorio si las usas. En ese caso, además de mo
 = 0.46 =
 *24 abril 2019*
 * Corrección de fallos menores que emitían un warning con el modo debug activado.
-* Globo notificativo de incidencias de configuración junto al título en el menú de administración. 
+* Globo notificativo de incidencias de configuración junto al título en el menú de administración.
 * Renombrada función para evitar colisiones con otros plugins en el almacenamiento de la configuración.
 * Aumenta el proceso de la exigencia de aceptar la política de privacidad en el formulario de comentarios de Jetpack para ayudar a combatir el spam.
 

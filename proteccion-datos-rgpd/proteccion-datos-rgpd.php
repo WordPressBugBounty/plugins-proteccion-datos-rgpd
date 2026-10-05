@@ -3,28 +3,19 @@
  * Plugin Name: Protección de datos - RGPD
  * Plugin URI:  https://taller.abcdatos.net/plugin-rgpd-wordpress/
  * Description: Arrange your site to GDPR (General Data Protection Regulation) and LSSICE as well as other required tasks based on required configurations ettings.
- * Version:     0.71
+ * Version:     0.72
  * Author:      ABCdatos
  * Author URI:  https://taller.abcdatos.net/
  * License:     GPLv2
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: proteccion-datos-rgpd
- * Domain Path: /languages
  *
  * @package proteccion-datos-rgpd
  */
 
 defined( 'ABSPATH' ) || die( 'No se permite el acceso.' );
 
-// i18n.
-/** Requerido o se obtiene error Plugin is not compatible with language packs: Missing load_plugin_textdomain(). en el canal de Slack #meta-language-packs.
- *
- * O usamos este hook o el requisito mínimo es WP 4.7.
- */
-function pdrgpd_load_plugin_textdomain() {
-	load_plugin_textdomain( 'proteccion-datos-rgpd', false, basename( __DIR__ ) . '/languages' );
-}
-add_action( 'plugins_loaded', 'pdrgpd_load_plugin_textdomain' );
+// i18n. Translations are loaded automatically by wordpress.org via Text Domain (since WP 4.6).
 
 // Administration features (settings).
 if ( is_admin() ) {
